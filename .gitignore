@@ -79,6 +79,7 @@ application-*.properties
 *.sqlite3
 *.db
 *.dump
+!schema.sql
 
 # Docker
 .docker/
