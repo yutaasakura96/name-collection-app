@@ -40,7 +40,7 @@ const NameForm = () => {
   return (
     <div className="card max-w-md mx-auto bg-base-100 shadow-xl">
       <div className="card-body">
-        <h2 className="card-title text-2xl font-bold mb-6 text-center">Add New Name</h2>
+        <h2 className="card-title text-2xl font-bold mb-6 text-center text-base-content">Add New Name</h2>
 
         {error && (
           <div className="alert alert-error mb-4">
@@ -59,12 +59,12 @@ const NameForm = () => {
         <form onSubmit={handleSubmit}>
           <div className="form-control w-full mb-4">
             <label className="label">
-              <span className="label-text">First Name</span>
+              <span className="label-text text-base-content">First Name</span>
             </label>
             <input
               type="text"
               placeholder="Enter first name"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full bg-base-200 text-base-content"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
             />
@@ -72,12 +72,12 @@ const NameForm = () => {
 
           <div className="form-control w-full mb-6">
             <label className="label">
-              <span className="label-text">Last Name</span>
+              <span className="label-text text-base-content">Last Name</span>
             </label>
             <input
               type="text"
               placeholder="Enter last name"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full bg-base-200 text-base-content"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
             />
