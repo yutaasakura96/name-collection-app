@@ -98,12 +98,12 @@ const NamesList = () => {
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Added On</th>
-                <th>Actions</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               {names.map((name) => (
-                <tr key={name.id} className="hover:bg-base-200 hover:cursor-pointer transition-colors duration-200">
+                <tr key={name.id} className="group hover:bg-base-200 transition-colors duration-200">
                   <td>{name.id}</td>
                   <td>
                     {editingId === name.id ? (
@@ -147,7 +147,7 @@ const NamesList = () => {
                         </button>
                       </div>
                     ) : (
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <button
                           onClick={() => handleEdit(name)}
                           className="btn btn-primary btn-sm"
