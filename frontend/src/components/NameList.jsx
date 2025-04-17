@@ -8,6 +8,10 @@ const NamesList = () => {
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({ firstName: '', lastName: '' });
 
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
   useEffect(() => {
     fetchNames();
   }, []);
@@ -110,7 +114,7 @@ const NamesList = () => {
                         className="input input-bordered input-sm w-full"
                       />
                     ) : (
-                      name.firstName
+                      capitalizeFirstLetter(name.firstName)
                     )}
                   </td>
                   <td>
@@ -122,7 +126,7 @@ const NamesList = () => {
                         className="input input-bordered input-sm w-full"
                       />
                     ) : (
-                      name.lastName
+                      capitalizeFirstLetter(name.lastName)
                     )}
                   </td>
                   <td>{new Date(name.createdAt).toLocaleString()}</td>
