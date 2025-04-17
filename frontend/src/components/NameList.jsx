@@ -144,7 +144,7 @@ const NamesList = () => {
             </thead>
             <tbody>
               {names.map((name) => (
-                <tr key={name.id} className="group hover:bg-base-200 transition-colors duration-200">
+                <tr key={name.id} className="group hover:bg-base-200 transition-colors duration-200 hover:cursor-pointer">
                   <td className="px-4">{name.id}</td>
                   <td className="px-4">
                     {editingId === name.id ? (
