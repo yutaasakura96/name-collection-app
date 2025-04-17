@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import apiService from '@/services/apiService';
+import { validateName, validateNameForm } from '@/utils/validation';
 
 const NameForm = () => {
   const [firstName, setFirstName] = useState('');
@@ -7,12 +8,21 @@ const NameForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({
+    firstName: '',
+    lastName: ''
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!firstName || !lastName) {
-      setError('Please enter both first and last name');
+    const validationResult = validateNameForm(firstName, lastName);
+    setValidationErrors({
+      firstName: validationResult.firstName,
+      lastName: validationResult.lastName
+    });
+
+    if (!validationResult.isValid) {
       return;
     }
 
@@ -25,13 +35,11 @@ const NameForm = () => {
       setFirstName('');
       setLastName('');
 
-      // Reset success message after 3 seconds
       setTimeout(() => {
         setSuccess(false);
       }, 3000);
     } catch (error) {
       setError(error.message || 'Failed to submit name. Please try again.');
-      setError('Failed to submit name. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -57,30 +65,52 @@ const NameForm = () => {
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="form-control w-full mb-4">
+          <div className="form-control w-full mb-5">
             <label className="label">
-              <span className="label-text text-base-content">First Name</span>
+              <span className="label-text text-base-content font-semibold mb-2">First Name</span>
             </label>
             <input
               type="text"
               placeholder="Enter first name"
-              className="input input-bordered w-full bg-base-200 text-base-content"
+              className={`input input-bordered w-full bg-base-200 text-base-content ${validationErrors.firstName ? 'input-error' : ''}`}
               value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={(e) => {
+                setFirstName(e.target.value);
+                setValidationErrors(prev => ({
+                  ...prev,
+                  firstName: validateName(e.target.value, 'First name')
+                }));
+              }}
             />
+            {validationErrors.firstName && (
+              <label className="label">
+                <span className="label-text-alt text-error">{validationErrors.firstName}</span>
+              </label>
+            )}
           </div>
 
-          <div className="form-control w-full mb-6">
+          <div className="form-control w-full mb-8">
             <label className="label">
-              <span className="label-text text-base-content">Last Name</span>
+              <span className="label-text text-base-content font-semibold mb-2">Last Name</span>
             </label>
             <input
               type="text"
               placeholder="Enter last name"
-              className="input input-bordered w-full bg-base-200 text-base-content"
+              className={`input input-bordered w-full bg-base-200 text-base-content ${validationErrors.lastName ? 'input-error' : ''}`}
               value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
+              onChange={(e) => {
+                setLastName(e.target.value);
+                setValidationErrors(prev => ({
+                  ...prev,
+                  lastName: validateName(e.target.value, 'Last name')
+                }));
+              }}
             />
+            {validationErrors.lastName && (
+              <label className="label">
+                <span className="label-text-alt text-error">{validationErrors.lastName}</span>
+              </label>
+            )}
           </div>
 
           <button

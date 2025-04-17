@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import apiService from '@/services/apiService';
+import { validateName, validateNameForm } from '@/utils/validation';
 
 const NamesList = () => {
   const [names, setNames] = useState([]);
@@ -7,6 +8,10 @@ const NamesList = () => {
   const [error, setError] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({ firstName: '', lastName: '' });
+  const [editValidationErrors, setEditValidationErrors] = useState({
+    firstName: '',
+    lastName: ''
+  });
 
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
@@ -31,19 +36,32 @@ const NamesList = () => {
   const handleEdit = (name) => {
     setEditingId(name.id);
     setEditForm({ firstName: name.firstName, lastName: name.lastName });
+    setEditValidationErrors({ firstName: '', lastName: '' });
   };
 
   const handleCancelEdit = () => {
     setEditingId(null);
     setEditForm({ firstName: '', lastName: '' });
+    setEditValidationErrors({ firstName: '', lastName: '' });
   };
 
   const handleUpdate = async (id) => {
+    const validationResult = validateNameForm(editForm.firstName, editForm.lastName);
+    setEditValidationErrors({
+      firstName: validationResult.firstName,
+      lastName: validationResult.lastName
+    });
+
+    if (!validationResult.isValid) {
+      return;
+    }
+
     try {
       await apiService.updateName(id, editForm.firstName, editForm.lastName);
       await fetchNames();
       setEditingId(null);
       setEditForm({ firstName: '', lastName: '' });
+      setEditValidationErrors({ firstName: '', lastName: '' });
     } catch (error) {
       setError(error.message || 'Failed to update name. Please try again later.');
     }
@@ -94,48 +112,71 @@ const NamesList = () => {
             </caption>
             <thead>
               <tr>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Added On</th>
-                <th></th>
+                <th className="w-16">ID</th>
+                <th className="w-36">First Name</th>
+                <th className="w-36">Last Name</th>
+                <th className="w-36">Added On</th>
+                <th className="w-20"></th>
               </tr>
             </thead>
             <tbody>
               {names.map((name) => (
                 <tr key={name.id} className="group hover:bg-base-200 transition-colors duration-200">
-                  <td>{name.id}</td>
-                  <td>
+                  <td className="px-4">{name.id}</td>
+                  <td className="px-4">
                     {editingId === name.id ? (
-                      <input
-                        type="text"
-                        value={editForm.firstName}
-                        onChange={(e) => setEditForm({ ...editForm, firstName: e.target.value })}
-                        className="input input-bordered input-sm w-full"
-                      />
+                      <div className="form-control">
+                        <input
+                          type="text"
+                          value={editForm.firstName}
+                          onChange={(e) => {
+                            setEditForm({ ...editForm, firstName: e.target.value });
+                            setEditValidationErrors(prev => ({
+                              ...prev,
+                              firstName: validateName(e.target.value, 'First name')
+                            }));
+                          }}
+                          className={`input input-bordered input-sm w-32 ${editValidationErrors.firstName ? 'input-error' : ''}`}
+                        />
+                        {editValidationErrors.firstName && (
+                          <span className="text-error text-xs mt-1">{editValidationErrors.firstName}</span>
+                        )}
+                      </div>
                     ) : (
                       capitalizeFirstLetter(name.firstName)
                     )}
                   </td>
-                  <td>
+                  <td className="px-4">
                     {editingId === name.id ? (
-                      <input
-                        type="text"
-                        value={editForm.lastName}
-                        onChange={(e) => setEditForm({ ...editForm, lastName: e.target.value })}
-                        className="input input-bordered input-sm w-full"
-                      />
+                      <div className="form-control">
+                        <input
+                          type="text"
+                          value={editForm.lastName}
+                          onChange={(e) => {
+                            setEditForm({ ...editForm, lastName: e.target.value });
+                            setEditValidationErrors(prev => ({
+                              ...prev,
+                              lastName: validateName(e.target.value, 'Last name')
+                            }));
+                          }}
+                          className={`input input-bordered input-sm w-32 ${editValidationErrors.lastName ? 'input-error' : ''}`}
+                        />
+                        {editValidationErrors.lastName && (
+                          <span className="text-error text-xs mt-1">{editValidationErrors.lastName}</span>
+                        )}
+                      </div>
                     ) : (
                       capitalizeFirstLetter(name.lastName)
                     )}
                   </td>
-                  <td>{new Date(name.createdAt).toLocaleString()}</td>
-                  <td>
+                  <td className="px-4">{new Date(name.createdAt).toLocaleString()}</td>
+                  <td className="px-4">
                     {editingId === name.id ? (
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleUpdate(name.id)}
                           className="btn btn-success btn-sm"
+                          disabled={editValidationErrors.firstName || editValidationErrors.lastName}
                         >
                           Save
                         </button>
