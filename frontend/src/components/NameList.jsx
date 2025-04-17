@@ -5,23 +5,56 @@ const NamesList = () => {
   const [names, setNames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({ firstName: '', lastName: '' });
 
   useEffect(() => {
-    const fetchNames = async () => {
-      try {
-        const data = await apiService.getAllNames();
-        setNames(data);
-        setError('');
-      } catch (error) {
-        setError(error.message || 'Failed to fetch names. Please try again later.');
-        setError('Failed to fetch names. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchNames();
   }, []);
+
+  const fetchNames = async () => {
+    try {
+      const data = await apiService.getAllNames();
+      setNames(data);
+      setError('');
+    } catch (error) {
+      setError(error.message || 'Failed to fetch names. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = (name) => {
+    setEditingId(name.id);
+    setEditForm({ firstName: name.firstName, lastName: name.lastName });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditForm({ firstName: '', lastName: '' });
+  };
+
+  const handleUpdate = async (id) => {
+    try {
+      await apiService.updateName(id, editForm.firstName, editForm.lastName);
+      await fetchNames();
+      setEditingId(null);
+      setEditForm({ firstName: '', lastName: '' });
+    } catch (error) {
+      setError(error.message || 'Failed to update name. Please try again later.');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this name?')) {
+      try {
+        await apiService.deleteName(id);
+        await fetchNames();
+      } catch (error) {
+        setError(error.message || 'Failed to delete name. Please try again later.');
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -50,8 +83,8 @@ const NamesList = () => {
           <span>No names have been added yet.</span>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="table table-zebra">
+        <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 p-2">
+          <table className="table">
             <caption className="caption-bottom mt-4 text-sm opacity-70">
               List of all submitted names
             </caption>
@@ -61,16 +94,70 @@ const NamesList = () => {
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Added On</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {names.map((name) => (
-                <tr key={name.id}>
+                <tr key={name.id} className="hover:bg-base-200 hover:cursor-pointer transition-colors duration-200">
                   <td>{name.id}</td>
-                  <td>{name.firstName}</td>
-                  <td>{name.lastName}</td>
                   <td>
-                    {new Date(name.createdAt).toLocaleString()}
+                    {editingId === name.id ? (
+                      <input
+                        type="text"
+                        value={editForm.firstName}
+                        onChange={(e) => setEditForm({ ...editForm, firstName: e.target.value })}
+                        className="input input-bordered input-sm w-full"
+                      />
+                    ) : (
+                      name.firstName
+                    )}
+                  </td>
+                  <td>
+                    {editingId === name.id ? (
+                      <input
+                        type="text"
+                        value={editForm.lastName}
+                        onChange={(e) => setEditForm({ ...editForm, lastName: e.target.value })}
+                        className="input input-bordered input-sm w-full"
+                      />
+                    ) : (
+                      name.lastName
+                    )}
+                  </td>
+                  <td>{new Date(name.createdAt).toLocaleString()}</td>
+                  <td>
+                    {editingId === name.id ? (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleUpdate(name.id)}
+                          className="btn btn-success btn-sm"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={handleCancelEdit}
+                          className="btn btn-ghost btn-sm"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEdit(name)}
+                          className="btn btn-primary btn-sm"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(name.id)}
+                          className="btn btn-error btn-sm"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}
