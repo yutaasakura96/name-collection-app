@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import apiService from '@/services/apiService';
 import { validateName, validateNameForm } from '@/utils/validation';
+import ConfirmationModal from '@/components/common/ConfirmationModal';
 
 const NamesList = () => {
   const [names, setNames] = useState([]);
@@ -11,6 +12,16 @@ const NamesList = () => {
   const [editValidationErrors, setEditValidationErrors] = useState({
     firstName: '',
     lastName: ''
+  });
+
+  // Modal states
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    id: null
+  });
+  const [saveModal, setSaveModal] = useState({
+    isOpen: false,
+    id: null
   });
 
   const capitalizeFirstLetter = (string) => {
@@ -45,7 +56,7 @@ const NamesList = () => {
     setEditValidationErrors({ firstName: '', lastName: '' });
   };
 
-  const handleUpdate = async (id) => {
+  const handleShowUpdateConfirmation = (id) => {
     const validationResult = validateNameForm(editForm.firstName, editForm.lastName);
     setEditValidationErrors({
       firstName: validationResult.firstName,
@@ -56,6 +67,13 @@ const NamesList = () => {
       return;
     }
 
+    setSaveModal({
+      isOpen: true,
+      id
+    });
+  };
+
+  const handleUpdate = async (id) => {
     try {
       await apiService.updateName(id, editForm.firstName, editForm.lastName);
       await fetchNames();
@@ -67,14 +85,19 @@ const NamesList = () => {
     }
   };
 
+  const handleShowDeleteConfirmation = (id) => {
+    setDeleteModal({
+      isOpen: true,
+      id
+    });
+  };
+
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this name?')) {
-      try {
-        await apiService.deleteName(id);
-        await fetchNames();
-      } catch (error) {
-        setError(error.message || 'Failed to delete name. Please try again later.');
-      }
+    try {
+      await apiService.deleteName(id);
+      await fetchNames();
+    } catch (error) {
+      setError(error.message || 'Failed to delete name. Please try again later.');
     }
   };
 
@@ -174,7 +197,7 @@ const NamesList = () => {
                     {editingId === name.id ? (
                       <div className="flex gap-2">
                         <button
-                          onClick={() => handleUpdate(name.id)}
+                          onClick={() => handleShowUpdateConfirmation(name.id)}
                           className="btn btn-success btn-sm"
                           disabled={editValidationErrors.firstName || editValidationErrors.lastName}
                         >
@@ -196,7 +219,7 @@ const NamesList = () => {
                           Edit
                         </button>
                         <button
-                          onClick={() => handleDelete(name.id)}
+                          onClick={() => handleShowDeleteConfirmation(name.id)}
                           className="btn btn-error btn-sm"
                         >
                           Delete
@@ -210,6 +233,32 @@ const NamesList = () => {
           </table>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        id="delete-modal"
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ isOpen: false, id: null })}
+        onConfirm={() => handleDelete(deleteModal.id)}
+        title="Confirm Deletion"
+        message="Are you sure you want to delete this name? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="error"
+      />
+
+      {/* Save Confirmation Modal */}
+      <ConfirmationModal
+        id="save-modal"
+        isOpen={saveModal.isOpen}
+        onClose={() => setSaveModal({ isOpen: false, id: null })}
+        onConfirm={() => handleUpdate(saveModal.id)}
+        title="Confirm Update"
+        message="Are you sure you want to save these changes?"
+        confirmText="Save"
+        cancelText="Cancel"
+        type="success"
+      />
     </div>
   );
 };
