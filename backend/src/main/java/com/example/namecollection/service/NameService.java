@@ -22,4 +22,12 @@ public class NameService {
     public Name saveName(Name name) {
       return nameRepository.save(name);
     }
+
+    public Name getNameById(Long id) {
+      return nameRepository.findById(id).orElse(null);
+    }
+
+    public void deleteName(Long id) {
+      nameRepository.deleteById(id);
+    }
 }
