@@ -17,31 +17,31 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/namesdb
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
     ports:
       - "8080:8080"
     depends_on:
       - postgres
     networks:
       - app-network
-    # Handles cases where the database isn't ready yet
+      # Handles cases where the database isn't ready yet
     restart: on-failure
 
   postgres:
     image: postgres:14-alpine
     environment:
-      - POSTGRES_DB=namesdb
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    # Initialize the database with schema and seed data
-      - ./backend/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
-      - ./backend/src/main/resources/seed-data.sql:/docker-entrypoint-initdb.d/02-seed-data.sql
+      # Initialize the database with schema and seed data
+      - ./backend/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./backend/src/main/resources/seed-data.sql:/docker-entrypoint-initdb.d/02-seed-data.sql:ro
     networks:
       - app-network
 
