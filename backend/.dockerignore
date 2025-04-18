@@ -1,0 +1,11 @@
+# Backend .dockerignore
+build
+.gradle
+.git
+.gitignore
+README.md
+*.iml
+*.ipr
+*.iws
+out
+.idea
