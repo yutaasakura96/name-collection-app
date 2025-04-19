@@ -1,4 +1,3 @@
-// backend/src/main/java/com/example/namecollection/controller/NameController.java
 package com.example.namecollection.controller;
 
 import java.util.HashMap;
