@@ -9,8 +9,6 @@ COPY gradlew .
 COPY gradle gradle
 COPY build.gradle .
 COPY settings.gradle .
-# Add this line if you have additional build scripts
-# COPY buildSrc buildSrc (if you have it)
 
 # Make gradlew executable
 RUN chmod +x ./gradlew
@@ -26,6 +24,9 @@ RUN ./gradlew build -x test --no-daemon
 
 # Runtime stage
 FROM eclipse-temurin:21-jre-alpine
+
+# Install curl for health checks
+RUN apk add --no-cache curl
 
 # Set working directory
 WORKDIR /app
