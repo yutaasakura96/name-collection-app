@@ -1,10 +1,28 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import Navigation from '@/components/Navigation';
 import NameForm from '@/components/NameForm';
 import NamesList from '@/components/NameList';
-import { useEffect } from 'react';
+import LoginPage from '@/components/LoginPage';
 
-function App() {
+// Protected route component
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
+
+  if (isLoading) {
+    return <div className="loading">Loading...</div>;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" state={{ returnTo: location.pathname }} />;
+  }
+
+  return children;
+};
+
+function AppContent() {
   // Initialize theme from localStorage or default to 'light'
   useEffect(() => {
     const theme = localStorage.getItem('theme') || 'light';
@@ -39,12 +57,29 @@ function App() {
         <Navigation />
         <main className="container mx-auto p-4">
           <Routes>
-            <Route path="/" element={<NameForm />} />
-            <Route path="/names" element={<NamesList />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/" element={
+              <ProtectedRoute>
+                <NameForm />
+              </ProtectedRoute>
+            } />
+            <Route path="/names" element={
+              <ProtectedRoute>
+                <NamesList />
+              </ProtectedRoute>
+            } />
           </Routes>
         </main>
       </div>
     </Router>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
