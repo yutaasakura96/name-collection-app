@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import apiService from '@/services/apiService';
 import { validateName, validateNameForm } from '@/utils/validation';
 import ConfirmationModal from '@/components/common/ConfirmationModal';
 
 const NamesList = () => {
+  const { token } = useAuth();
   const [names, setNames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -30,11 +32,11 @@ const NamesList = () => {
 
   useEffect(() => {
     fetchNames();
-  }, []);
+  }, [token]);
 
   const fetchNames = async () => {
     try {
-      const data = await apiService.getAllNames();
+      const data = await apiService.getAllNames(token);
       setNames(data);
       setError('');
     } catch (error) {
@@ -75,7 +77,7 @@ const NamesList = () => {
 
   const handleUpdate = async (id) => {
     try {
-      await apiService.updateName(id, editForm.firstName, editForm.lastName);
+      await apiService.updateName(id, editForm.firstName, editForm.lastName, token);
       await fetchNames();
       setEditingId(null);
       setEditForm({ firstName: '', lastName: '' });
@@ -94,7 +96,7 @@ const NamesList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await apiService.deleteName(id);
+      await apiService.deleteName(id, token);
       await fetchNames();
     } catch (error) {
       setError(error.message || 'Failed to delete name. Please try again later.');

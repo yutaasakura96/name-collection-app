@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import apiService from '@/services/apiService';
 import { validateName, validateNameForm } from '@/utils/validation';
 
 const NameForm = () => {
+  const { token } = useAuth();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,7 +32,7 @@ const NameForm = () => {
     setIsSubmitting(true);
 
     try {
-      await apiService.addName(firstName, lastName);
+      await apiService.addName(firstName, lastName, token);
       setSuccess(true);
       setFirstName('');
       setLastName('');
