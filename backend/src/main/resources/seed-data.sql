@@ -2,8 +2,8 @@
 DO $$
 BEGIN
   -- Only run seeding if users table is empty
-  IF NOT EXISTS (SELECT 1 FROM app_users LIMIT 1) THEN
-    INSERT INTO app_users (auth0_id, email, name, last_login)
+  IF NOT EXISTS (SELECT 1 FROM users LIMIT 1) THEN
+    INSERT INTO users (auth0_id, email, name, last_login)
     VALUES
       ('auth0|demo-user-1', 'demo1@example.com', 'Demo User 1', CURRENT_TIMESTAMP),
       ('auth0|demo-user-2', 'demo2@example.com', 'Demo User 2', CURRENT_TIMESTAMP);
