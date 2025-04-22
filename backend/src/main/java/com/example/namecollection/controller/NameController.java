@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +27,6 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/names")
-@CrossOrigin(origins = "*") // Only for development environment
 public class NameController {
     private final NameService nameService;
 
@@ -74,6 +72,10 @@ public class NameController {
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteName(@PathVariable Long id) {
         try {
+            Name existingName = nameService.getNameById(id);
+            if (existingName == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
             nameService.deleteName(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
