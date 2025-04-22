@@ -29,7 +29,7 @@ public class Name {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name="created_at")
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @PrePersist

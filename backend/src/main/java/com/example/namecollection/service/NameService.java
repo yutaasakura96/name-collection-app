@@ -9,25 +9,25 @@ import com.example.namecollection.repository.NameRepository;
 
 @Service
 public class NameService {
-  private final NameRepository nameRepository;
+    private final NameRepository nameRepository;
 
     public NameService(NameRepository nameRepository) {
         this.nameRepository = nameRepository;
     }
 
     public List<Name> getAllNames() {
-      return nameRepository.findAll();
+        return nameRepository.findAll();
     }
 
     public Name saveName(Name name) {
-      return nameRepository.save(name);
+        return nameRepository.save(name);
     }
 
     public Name getNameById(Long id) {
-      return nameRepository.findById(id).orElse(null);
+        return nameRepository.findById(id).orElse(null);
     }
 
     public void deleteName(Long id) {
-      nameRepository.deleteById(id);
+        nameRepository.deleteById(id);
     }
 }
