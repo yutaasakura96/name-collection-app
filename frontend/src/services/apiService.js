@@ -10,37 +10,17 @@ const API_URL = import.meta.env.PROD
   ? import.meta.env.VITE_API_URL || DEFAULT_PROD_API_URL
   : import.meta.env.VITE_API_URL || DEFAULT_DEV_API_URL;
 
-// Create axios instance with default config
-const apiClient = axios.create({
-  baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  timeout: 10000,
-});
-
-// Add request interceptor for logging or auth tokens
-apiClient.interceptors.request.use(
-  (config) => {
-    // Add auth tokens here in the future
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor for common error handling
-apiClient.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    // Handle common errors (like 401, 403, 500, etc.)
-    console.error("API Error:", error.response || error.message);
-    return Promise.reject(error);
-  }
-);
+// Create an axios instance with the given token
+const createApiClient = (token) => {
+  return axios.create({
+    baseURL: API_URL,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `Bearer ${token}` : undefined,
+    },
+    timeout: 10000,
+  });
+};
 
 // Use mock service in development mode if VITE_USE_MOCK_API is true
 const useMockService =
@@ -48,11 +28,12 @@ const useMockService =
 
 // Service methods using either the axios instance or mock service
 const apiService = {
-  getAllNames: async () => {
+  getAllNames: async (token) => {
     if (useMockService) {
       return mockService.getAllNames();
     }
     try {
+      const apiClient = createApiClient(token);
       const response = await apiClient.get("/names");
       return response.data;
     } catch (error) {
@@ -61,11 +42,12 @@ const apiService = {
     }
   },
 
-  addName: async (firstName, lastName) => {
+  addName: async (firstName, lastName, token) => {
     if (useMockService) {
       return mockService.addName(firstName, lastName);
     }
     try {
+      const apiClient = createApiClient(token);
       const response = await apiClient.post("/names", {
         firstName,
         lastName,
@@ -77,11 +59,12 @@ const apiService = {
     }
   },
 
-  updateName: async (id, firstName, lastName) => {
+  updateName: async (id, firstName, lastName, token) => {
     if (useMockService) {
       return mockService.updateName(id, firstName, lastName);
     }
     try {
+      const apiClient = createApiClient(token);
       const response = await apiClient.put(`/names/${id}`, {
         firstName,
         lastName,
@@ -93,11 +76,12 @@ const apiService = {
     }
   },
 
-  deleteName: async (id) => {
+  deleteName: async (id, token) => {
     if (useMockService) {
       return mockService.deleteName(id);
     }
     try {
+      const apiClient = createApiClient(token);
       await apiClient.delete(`/names/${id}`);
       return id;
     } catch (error) {
