@@ -8,7 +8,10 @@ services:
     depends_on:
       - backend
     environment:
-      - VITE_API_URL=http://backend:8080/api
+      - VITE_API_URL=${VITE_API_URL}
+      - VITE_AUTH0_DOMAIN=${VITE_AUTH0_DOMAIN}
+      - VITE_AUTH0_CLIENT_ID=${VITE_AUTH0_CLIENT_ID}
+      - VITE_AUTH0_AUDIENCE=${VITE_AUTH0_AUDIENCE}
     networks:
       - app-network
 
