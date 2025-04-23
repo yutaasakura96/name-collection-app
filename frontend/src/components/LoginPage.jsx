@@ -15,12 +15,12 @@ const LoginPage = () => {
   }, [isAuthenticated, navigate, location.state]);
 
   return (
-    <div className="hero min-h-screen bg-base-200">
-      <div className="hero-content text-center">
-        <div className="max-w-md">
-          <h1 className="text-5xl font-bold">Name Collection App</h1>
-          <p className="py-6">Welcome! Login to start managing your collection of names</p>
-          <button onClick={() => login()} className="btn btn-primary">
+    <div className="hero min-h-screen bg-base-200 flex flex-col mt-20">
+      <div className="hero-content text-center flex flex-col items-center justify-center">
+        <div className="max-w-md space-y-8">
+          <h1 className="text-6xl font-bold">Name Collection App</h1>
+          <p className="text-xl">Welcome! Login to start managing your collection of names</p>
+          <button onClick={() => login()} className="btn btn-primary btn-lg w-full">
             Login
           </button>
         </div>

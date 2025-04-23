@@ -34,3 +34,13 @@
   --noise: 0;
 }
 @plugin "daisyui";
+
+html, body {
+  overscroll-behavior-y: none;
+  height: 100%;
+  overflow: hidden;
+}
+
+#root {
+  height: 100%;
+}
