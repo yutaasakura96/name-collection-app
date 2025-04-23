@@ -39,32 +39,10 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function AppContent() {
-  // Initialize theme from localStorage or default to 'light'
+  // Initialize theme from localStorage or default to 'dark'
   useEffect(() => {
-    const theme = localStorage.getItem('theme') || 'light';
+    const theme = localStorage.getItem('theme') || 'dark';
     document.documentElement.setAttribute('data-theme', theme);
-  }, []);
-
-  // Theme toggle functionality
-  const toggleTheme = () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-  };
-
-  // Add event listener for theme toggle buttons
-  useEffect(() => {
-    const themeToggleButtons = document.querySelectorAll('[data-toggle-theme]');
-    themeToggleButtons.forEach(button => {
-      button.addEventListener('click', toggleTheme);
-    });
-
-    return () => {
-      themeToggleButtons.forEach(button => {
-        button.removeEventListener('click', toggleTheme);
-      });
-    };
   }, []);
 
   return (
