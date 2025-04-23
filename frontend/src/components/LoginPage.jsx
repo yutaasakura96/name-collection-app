@@ -1,4 +1,3 @@
-// src/components/LoginPage.jsx
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -10,7 +9,6 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      // Get the returnTo path from the location state or default to '/'
       const returnTo = location.state?.returnTo || '/';
       navigate(returnTo);
     }
