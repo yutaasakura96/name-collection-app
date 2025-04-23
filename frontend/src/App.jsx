@@ -39,6 +39,8 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function AppContent() {
+  const { isAuthenticated } = useAuth();
+
   // Initialize theme from localStorage or default to 'dark'
   useEffect(() => {
     const theme = localStorage.getItem('theme') || 'dark';
@@ -48,7 +50,7 @@ function AppContent() {
   return (
     <Router>
       <div className="min-h-screen bg-base-200">
-        <Navigation />
+        {isAuthenticated && <Navigation />}
         {/* For testing purposes only */}
         {/* <DebugAuth /> */}
         <main className="container mx-auto p-4">

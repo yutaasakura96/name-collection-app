@@ -15,7 +15,7 @@ const LoginPage = () => {
   }, [isAuthenticated, navigate, location.state]);
 
   return (
-    <div className="hero min-h-screen bg-base-200 flex flex-col mt-20">
+    <div className="hero min-h-screen bg-base-200 flex flex-col mt-40">
       <div className="hero-content text-center flex flex-col items-center justify-center">
         <div className="max-w-md space-y-8">
           <h1 className="text-6xl font-bold">Name Collection App</h1>
