@@ -25,8 +25,8 @@ const ProtectedRoute = ({ children }) => {
   if (isLoading || showLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="loading loading-spinner loading-lg"></div>
-        <p className="ml-2">Authenticating...</p>
+        <div className="loading loading-spinner loading-xl"></div>
+        {isAuthenticated && <p className="ml-2">Authenticating...</p>}
       </div>
     );
   }
