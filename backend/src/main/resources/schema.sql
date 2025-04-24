@@ -1,4 +1,4 @@
--- Create app_users table if it doesn't already exist
+-- Create users table if it doesn't already exist
 CREATE TABLE IF NOT EXISTS users (
     auth0_id VARCHAR(100) PRIMARY KEY,
     email VARCHAR(100) NOT NULL,
