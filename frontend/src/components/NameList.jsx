@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import apiService from '@/services/apiService';
 import { validateName, validateNameForm } from '@/utils/validation';
@@ -30,11 +30,7 @@ const NamesList = () => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   };
 
-  useEffect(() => {
-    fetchNames();
-  }, [token]);
-
-  const fetchNames = async () => {
+  const fetchNames = useCallback(async () => {
     try {
       const data = await apiService.getAllNames(token);
       setNames(data);
@@ -44,7 +40,11 @@ const NamesList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    fetchNames();
+  }, [fetchNames]);
 
   const handleEdit = (name) => {
     setEditingId(name.id);
