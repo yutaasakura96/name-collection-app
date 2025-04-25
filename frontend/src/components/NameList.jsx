@@ -26,8 +26,15 @@ const NamesList = () => {
     id: null
   });
 
+  // Capitalize the first letter of a string
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
+  // Utility function to format the UUID for display
+  const formatUuid = (uuid) => {
+    if (!uuid) return '';
+    return uuid.slice(-8).toUpperCase();
   };
 
   const fetchNames = useCallback(async () => {
@@ -146,8 +153,8 @@ const NamesList = () => {
             </thead>
             <tbody>
               {names.map((name) => (
-                <tr key={name.id} className="group hover:bg-base-200 transition-colors duration-200 hover:cursor-pointer">
-                  <td className="px-4">{name.id}</td>
+                 <tr key={name.uuid} className="group hover:bg-base-200 transition-colors duration-200 hover:cursor-pointer">
+                  <td className="px-4">{formatUuid(name.uuid)}</td>
                   <td className="px-4">
                     {editingId === name.id ? (
                       <div className="form-control">

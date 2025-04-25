@@ -1,17 +1,12 @@
 import axios from "axios";
 import mockService from "@/services/mockService";
 
-// Default values as fallbacks
-const DEFAULT_DEV_API_URL = "http://localhost:8080/api";
-const DEFAULT_PROD_API_URL = "/api";
-
-// Use environment variables if provided, otherwise use defaults
+// Use environment variables if provided, otherwise use defaults fallbacks
 const API_URL = import.meta.env.PROD
-  ? import.meta.env.VITE_API_URL || DEFAULT_PROD_API_URL
-  : import.meta.env.VITE_API_URL || DEFAULT_DEV_API_URL;
-
-// Create an axios instance with the given token
-const createApiClient = (token) => {
+  ? import.meta.env.VITE_API_URL || "/api"
+  : import.meta.env.VITE_API_URL || "http://localhost:8080/api";
+  // Create an axios instance with the given token
+  const createApiClient = (token) => {
   return axios.create({
     baseURL: API_URL,
     headers: {
@@ -59,13 +54,13 @@ const apiService = {
     }
   },
 
-  updateName: async (id, firstName, lastName, token) => {
+  updateName: async (uuid, firstName, lastName, token) => {
     if (useMockService) {
-      return mockService.updateName(id, firstName, lastName);
+      return mockService.updateName(uuid, firstName, lastName);
     }
     try {
       const apiClient = createApiClient(token);
-      const response = await apiClient.put(`/names/${id}`, {
+      const response = await apiClient.put(`/names/${uuid}`, {
         firstName,
         lastName,
       });
@@ -76,14 +71,14 @@ const apiService = {
     }
   },
 
-  deleteName: async (id, token) => {
+  deleteName: async (uuid, token) => {
     if (useMockService) {
-      return mockService.deleteName(id);
+      return mockService.deleteName(uuid);
     }
     try {
       const apiClient = createApiClient(token);
-      await apiClient.delete(`/names/${id}`);
-      return id;
+      await apiClient.delete(`/names/${uuid}`);
+      return uuid;
     } catch (error) {
       console.error("Error deleting name:", error);
       throw error;
