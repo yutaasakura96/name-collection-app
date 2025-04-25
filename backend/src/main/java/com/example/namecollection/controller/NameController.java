@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -29,6 +31,8 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/names")
 public class NameController {
+    private static final Logger logger = LoggerFactory.getLogger(NameController.class);
+
     private final NameService nameService;
 
     public NameController(NameService nameService) {
@@ -55,19 +59,14 @@ public class NameController {
     public ResponseEntity<NameResponseDTO> updateName(@PathVariable String uuid,
             @Valid @RequestBody NameDTO nameDTO) {
         try {
-            NameResponseDTO existingName = nameService.getNameByUuid(uuid);
-            if (existingName == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-
-            Name name = new Name();
-            name.setUuid(uuid);
-            name.setFirstName(nameDTO.getFirstName());
-            name.setLastName(nameDTO.getLastName());
-
-            NameResponseDTO updatedName = nameService.saveName(name);
+            NameResponseDTO updatedName =
+                    nameService.updateName(uuid, nameDTO.getFirstName(), nameDTO.getLastName());
             return new ResponseEntity<>(updatedName, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            logger.error("Error updating name with UUID: {}", uuid, e);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
+            logger.error("Unexpected error updating name with UUID: {}", uuid, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -75,13 +74,13 @@ public class NameController {
     @DeleteMapping("/{uuid}")
     public ResponseEntity<HttpStatus> deleteName(@PathVariable String uuid) {
         try {
-            NameResponseDTO existingName = nameService.getNameByUuid(uuid);
-            if (existingName == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
             nameService.deleteNameByUuid(uuid);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (RuntimeException e) {
+            logger.error("Error deleting name with UUID: {}", uuid, e);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
+            logger.error("Unexpected error deleting name with UUID: {}", uuid, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
