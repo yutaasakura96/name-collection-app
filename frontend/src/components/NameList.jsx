@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import apiService from '@/services/apiService';
 import { validateName, validateNameForm } from '@/utils/validation';
 import ConfirmationModal from '@/components/common/ConfirmationModal';
-
+import { Info } from 'lucide-react';
 const NamesList = () => {
   const { token } = useAuth();
   const [names, setNames] = useState([]);
@@ -36,6 +36,20 @@ const NamesList = () => {
     if (!uuid) return '';
     return uuid.slice(-8).toUpperCase();
   };
+
+  // Add copy to clipboard function
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+      return false;
+    }
+  };
+
+  // Add state for copy feedback
+  const [copiedUuid, setCopiedUuid] = useState(null);
 
   const fetchNames = useCallback(async () => {
     try {
@@ -181,7 +195,26 @@ const NamesList = () => {
                   key={name.uuid}
                   className="group hover:bg-base-200 transition-colors duration-200 hover:cursor-pointer"
                 >
-                  <td className="px-4">{formatUuid(name.uuid)}</td>
+                  <td className="px-4">
+                    <div
+                      className="tooltip tooltip-bottom"
+                      data-tip={copiedUuid === name.uuid ? 'Copied!' : 'Click to copy full ID'}
+                    >
+                      <button
+                        onClick={async () => {
+                          const success = await copyToClipboard(name.uuid);
+                          if (success) {
+                            setCopiedUuid(name.uuid);
+                            setTimeout(() => setCopiedUuid(null), 2000);
+                          }
+                        }}
+                        className="btn btn-ghost hover:btn-primary transition-colors duration-200 cursor-pointer"
+                      >
+                        {formatUuid(name.uuid)}
+                        <Info size={14} className="text-base" />
+                      </button>
+                    </div>
+                  </td>
                   <td className="px-4">
                     {editingId === name.uuid ? (
                       <div className="form-control">
@@ -252,7 +285,7 @@ const NamesList = () => {
                         </button>
                       </div>
                     ) : (
-                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <button onClick={() => handleEdit(name)} className="btn btn-primary btn-sm">
                           Edit
                         </button>
