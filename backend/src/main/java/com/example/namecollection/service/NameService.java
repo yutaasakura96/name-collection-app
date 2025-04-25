@@ -1,9 +1,11 @@
 package com.example.namecollection.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.namecollection.dto.NameResponseDTO;
 import com.example.namecollection.model.Name;
 import com.example.namecollection.repository.NameRepository;
 
@@ -15,19 +17,30 @@ public class NameService {
         this.nameRepository = nameRepository;
     }
 
-    public List<Name> getAllNames() {
-        return nameRepository.findAll();
+    public List<NameResponseDTO> getAllNames() {
+        return nameRepository.findAll().stream().map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
-    public Name saveName(Name name) {
-        return nameRepository.save(name);
+    public NameResponseDTO saveName(Name name) {
+        Name savedName = nameRepository.save(name);
+        return convertToDTO(savedName);
     }
 
-    public Name getNameById(Long id) {
-        return nameRepository.findById(id).orElse(null);
+    public NameResponseDTO getNameByUuid(String uuid) {
+        return nameRepository.findByUuid(uuid).map(this::convertToDTO).orElse(null);
     }
 
-    public void deleteName(Long id) {
-        nameRepository.deleteById(id);
+    public void deleteNameByUuid(String uuid) {
+        nameRepository.deleteByUuid(uuid);
+    }
+
+    private NameResponseDTO convertToDTO(Name name) {
+        NameResponseDTO dto = new NameResponseDTO();
+        dto.setUuid(name.getUuid());
+        dto.setFirstName(name.getFirstName());
+        dto.setLastName(name.getLastName());
+        dto.setCreatedAt(name.getCreatedAt());
+        return dto;
     }
 }
