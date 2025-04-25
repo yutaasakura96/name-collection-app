@@ -1,6 +1,7 @@
 package com.example.namecollection.model;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,6 +24,9 @@ public class Name {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "uuid", nullable = false, unique = true, updatable = false)
+    private String uuid;
+
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
@@ -35,6 +39,8 @@ public class Name {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        if (uuid == null) {
+            uuid = UUID.randomUUID().toString();
+        }
     }
-
 }

@@ -19,13 +19,13 @@ DO $$
 BEGIN
   -- Only run seeding if table is empty
   IF NOT EXISTS (SELECT 1 FROM names LIMIT 1) THEN
-    INSERT INTO names (first_name, last_name, created_at)
+    INSERT INTO names (first_name, last_name, created_at, uuid)
     VALUES
-      ('John', 'Doe', CURRENT_TIMESTAMP),
-      ('Jane', 'Smith', CURRENT_TIMESTAMP),
-      ('Michael', 'Johnson', CURRENT_TIMESTAMP),
-      ('Emily', 'Williams', CURRENT_TIMESTAMP),
-      ('David', 'Brown', CURRENT_TIMESTAMP);
+      ('John', 'Doe', CURRENT_TIMESTAMP, gen_random_uuid()),
+      ('Jane', 'Smith', CURRENT_TIMESTAMP, gen_random_uuid()),
+      ('Michael', 'Johnson', CURRENT_TIMESTAMP, gen_random_uuid()),
+      ('Emily', 'Williams', CURRENT_TIMESTAMP, gen_random_uuid()),
+      ('David', 'Brown', CURRENT_TIMESTAMP, gen_random_uuid());
     RAISE NOTICE 'Name seed data inserted successfully';
   ELSE
     RAISE NOTICE 'Names table not empty, skipping seed data insertion';
