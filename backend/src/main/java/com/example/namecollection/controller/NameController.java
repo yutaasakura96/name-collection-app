@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.namecollection.dto.NameDTO;
+import com.example.namecollection.dto.NameResponseDTO;
 import com.example.namecollection.model.Name;
 import com.example.namecollection.service.NameService;
 
@@ -35,48 +36,50 @@ public class NameController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Name>> getAllNames() {
-        List<Name> names = nameService.getAllNames();
+    public ResponseEntity<List<NameResponseDTO>> getAllNames() {
+        List<NameResponseDTO> names = nameService.getAllNames();
         return new ResponseEntity<>(names, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Name> createName(@Valid @RequestBody NameDTO nameDTO) {
+    public ResponseEntity<NameResponseDTO> createName(@Valid @RequestBody NameDTO nameDTO) {
         Name name = new Name();
         name.setFirstName(nameDTO.getFirstName());
         name.setLastName(nameDTO.getLastName());
 
-        Name savedName = nameService.saveName(name);
+        NameResponseDTO savedName = nameService.saveName(name);
         return new ResponseEntity<>(savedName, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Name> updateName(@PathVariable Long id,
+    @PutMapping("/{uuid}")
+    public ResponseEntity<NameResponseDTO> updateName(@PathVariable String uuid,
             @Valid @RequestBody NameDTO nameDTO) {
         try {
-            Name existingName = nameService.getNameById(id);
+            NameResponseDTO existingName = nameService.getNameByUuid(uuid);
             if (existingName == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
-            existingName.setFirstName(nameDTO.getFirstName());
-            existingName.setLastName(nameDTO.getLastName());
+            Name name = new Name();
+            name.setUuid(uuid);
+            name.setFirstName(nameDTO.getFirstName());
+            name.setLastName(nameDTO.getLastName());
 
-            Name updatedName = nameService.saveName(existingName);
+            NameResponseDTO updatedName = nameService.saveName(name);
             return new ResponseEntity<>(updatedName, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteName(@PathVariable Long id) {
+    @DeleteMapping("/{uuid}")
+    public ResponseEntity<HttpStatus> deleteName(@PathVariable String uuid) {
         try {
-            Name existingName = nameService.getNameById(id);
+            NameResponseDTO existingName = nameService.getNameByUuid(uuid);
             if (existingName == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            nameService.deleteName(id);
+            nameService.deleteNameByUuid(uuid);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
