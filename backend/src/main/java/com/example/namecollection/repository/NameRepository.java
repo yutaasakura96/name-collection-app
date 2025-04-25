@@ -3,12 +3,18 @@ package com.example.namecollection.repository;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.namecollection.model.Name;
 
 public interface NameRepository extends JpaRepository<Name, Long> {
-    // Basic CRUD operations are automatically provided by JpaRepository
     Optional<Name> findByUuid(String uuid);
 
-    void deleteByUuid(String uuid);
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM Name n WHERE n.uuid = :uuid")
+    void deleteByUuid(@Param("uuid") String uuid);
 }
