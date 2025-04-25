@@ -1,19 +1,19 @@
 import { mockNames } from "@/services/mockData.js";
+import { v4 as uuidv4 } from "uuid";
 
 // Simulate network delay
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Simulate API errors
+// Simulate API errors, 10% chance of error
 const simulateError = () => {
   if (Math.random() < 0.1) {
-    // 10% chance of error
     throw new Error("Simulated API error");
   }
 };
 
 const mockService = {
   getAllNames: async () => {
-    await delay(500); // Simulate network delay
+    await delay(500);
     simulateError();
     return [...mockNames];
   },
@@ -22,7 +22,7 @@ const mockService = {
     await delay(500);
     simulateError();
     const newName = {
-      id: mockNames.length + 1,
+      uuid: uuidv4(),
       firstName,
       lastName,
       createdAt: new Date().toISOString(),
@@ -31,10 +31,10 @@ const mockService = {
     return newName;
   },
 
-  updateName: async (id, firstName, lastName) => {
+  updateName: async (uuid, firstName, lastName) => {
     await delay(500);
     simulateError();
-    const index = mockNames.findIndex((name) => name.id === id);
+    const index = mockNames.findIndex((name) => name.uuid === uuid);
     if (index === -1) {
       throw new Error("Name not found");
     }
@@ -46,15 +46,15 @@ const mockService = {
     return mockNames[index];
   },
 
-  deleteName: async (id) => {
+  deleteName: async (uuid) => {
     await delay(500);
     simulateError();
-    const index = mockNames.findIndex((name) => name.id === id);
+    const index = mockNames.findIndex((name) => name.uuid === uuid);
     if (index === -1) {
       throw new Error("Name not found");
     }
     mockNames.splice(index, 1);
-    return id;
+    return uuid;
   },
 };
 
