@@ -1,5 +1,5 @@
 # Start with a base image containing Java runtime
-FROM eclipse-temurin:21-jdk-alpine as build
+FROM eclipse-temurin:21-jdk-alpine AS build
 
 # Set the working directory
 WORKDIR /app
