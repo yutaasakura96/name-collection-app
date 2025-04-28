@@ -51,9 +51,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-       # Initialize the database with schema and seed data
-      - ./backend/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
-      - ./backend/src/main/resources/seed-data.sql:/docker-entrypoint-initdb.d/02-seed-data.sql:ro
     networks:
       - app-network
     healthcheck:

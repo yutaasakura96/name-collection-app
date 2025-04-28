@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Create names table if it doesn't already exist
 CREATE TABLE IF NOT EXISTS names (
-    id SERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     uuid VARCHAR(36) NOT NULL UNIQUE,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
