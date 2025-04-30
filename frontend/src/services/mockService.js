@@ -11,11 +11,80 @@ const simulateError = () => {
   }
 };
 
+// Helper function to sort by field
+const sortBy = (array, field, direction) => {
+  return [...array].sort((a, b) => {
+    let valueA = a[field];
+    let valueB = b[field];
+
+    // Handle special cases for dates
+    if (field === "createdAt") {
+      valueA = new Date(valueA);
+      valueB = new Date(valueB);
+    }
+
+    if (valueA < valueB) {
+      return direction === "ASC" ? -1 : 1;
+    }
+    if (valueA > valueB) {
+      return direction === "ASC" ? 1 : -1;
+    }
+    return 0;
+  });
+};
+
+// Helper function to filter array
+const filterNames = (array, criteria) => {
+  return array.filter((item) => {
+    const matchesFirstName =
+      !criteria.firstName ||
+      item.firstName.toLowerCase().includes(criteria.firstName.toLowerCase());
+    const matchesLastName =
+      !criteria.lastName || item.lastName.toLowerCase().includes(criteria.lastName.toLowerCase());
+
+    return matchesFirstName && matchesLastName;
+  });
+};
+
+// Helper function to paginate array
+const paginate = (array, page, size) => {
+  const startIndex = page * size;
+  const endIndex = startIndex + size;
+  return array.slice(startIndex, endIndex);
+};
+
 const mockService = {
   getAllNames: async () => {
     await delay(500);
     simulateError();
     return [...mockNames];
+  },
+
+  searchNames: async (criteria) => {
+    await delay(500);
+    simulateError();
+
+    // Apply filters
+    let filteredNames = filterNames(mockNames, criteria);
+
+    // Apply sorting
+    filteredNames = sortBy(filteredNames, criteria.sortBy, criteria.sortDirection);
+
+    // Get total count before pagination
+    const totalElements = filteredNames.length;
+
+    // Apply pagination
+    const pagedNames = paginate(filteredNames, criteria.page, criteria.size);
+
+    return {
+      content: pagedNames,
+      pageNumber: criteria.page,
+      pageSize: criteria.size,
+      totalElements: totalElements,
+      totalPages: Math.ceil(totalElements / criteria.size),
+      first: criteria.page === 0,
+      last: (criteria.page + 1) * criteria.size >= totalElements,
+    };
   },
 
   addName: async (firstName, lastName) => {
