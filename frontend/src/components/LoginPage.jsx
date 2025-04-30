@@ -1,6 +1,6 @@
-import { useAuth } from '@/contexts/AuthContext';
-import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const LoginPage = () => {
   const { login, isAuthenticated } = useAuth();
@@ -9,7 +9,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      const returnTo = location.state?.returnTo || '/';
+      const returnTo = location.state?.returnTo || "/";
       navigate(returnTo);
     }
   }, [isAuthenticated, navigate, location.state]);

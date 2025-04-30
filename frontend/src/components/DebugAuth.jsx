@@ -1,14 +1,8 @@
-import { useAuth0 } from '@auth0/auth0-react';
-import { useEffect, useState } from 'react';
+import { useAuth0 } from "@auth0/auth0-react";
+import { useEffect, useState } from "react";
 
 const DebugAuth = () => {
-  const {
-    isLoading,
-    isAuthenticated,
-    error,
-    user,
-    getAccessTokenSilently
-  } = useAuth0();
+  const { isLoading, isAuthenticated, error, user, getAccessTokenSilently } = useAuth0();
   const [tokenError, setTokenError] = useState(null);
 
   useEffect(() => {
@@ -31,11 +25,15 @@ const DebugAuth = () => {
     <div className="p-4 border rounded bg-base-200 my-4">
       <h2 className="text-lg font-bold">Auth0 Debug Info</h2>
       <pre className="text-sm bg-base-300 p-2 rounded overflow-auto my-2">
-        isLoading: {isLoading.toString()}{'\n'}
-        isAuthenticated: {isAuthenticated.toString()}{'\n'}
-        error: {error ? error.message : 'none'}{'\n'}
-        tokenError: {tokenError || 'none'}{'\n'}
-        user: {user ? JSON.stringify(user, null, 2) : 'none'}
+        isLoading: {isLoading.toString()}
+        {"\n"}
+        isAuthenticated: {isAuthenticated.toString()}
+        {"\n"}
+        error: {error ? error.message : "none"}
+        {"\n"}
+        tokenError: {tokenError || "none"}
+        {"\n"}
+        user: {user ? JSON.stringify(user, null, 2) : "none"}
       </pre>
     </div>
   );

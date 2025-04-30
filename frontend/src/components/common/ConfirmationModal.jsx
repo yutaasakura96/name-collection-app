@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect } from "react";
 
 const ConfirmationModal = ({
   id,
@@ -9,18 +9,23 @@ const ConfirmationModal = ({
   message,
   confirmText = "Confirm",
   cancelText = "Cancel",
-  type = "warning"
+  type = "warning",
 }) => {
   const modalRef = useRef(null);
 
   // Get button class based on type
   const getButtonClass = () => {
-    switch(type) {
-      case 'error': return 'btn-error';
-      case 'warning': return 'btn-warning';
-      case 'info': return 'btn-info';
-      case 'success': return 'btn-success';
-      default: return 'btn-primary';
+    switch (type) {
+      case "error":
+        return "btn-error";
+      case "warning":
+        return "btn-warning";
+      case "info":
+        return "btn-info";
+      case "success":
+        return "btn-success";
+      default:
+        return "btn-primary";
     }
   };
 
@@ -40,7 +45,12 @@ const ConfirmationModal = ({
   };
 
   return (
-    <dialog id={id} ref={modalRef} className="modal modal-bottom sm:modal-middle" onClose={handleClose}>
+    <dialog
+      id={id}
+      ref={modalRef}
+      className="modal modal-bottom sm:modal-middle"
+      onClose={handleClose}
+    >
       <div className="modal-box">
         <h3 className="font-bold text-lg">{title}</h3>
         <p className="py-4">{message}</p>

@@ -1,17 +1,11 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
+import { createContext, useContext, useEffect, useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const {
-    isAuthenticated,
-    loginWithRedirect,
-    logout,
-    user,
-    getAccessTokenSilently,
-    isLoading
-  } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, logout, user, getAccessTokenSilently, isLoading } =
+    useAuth0();
 
   const [token, setToken] = useState(null);
 
@@ -22,7 +16,7 @@ export const AuthProvider = ({ children }) => {
           const accessToken = await getAccessTokenSilently();
           setToken(accessToken);
         } catch (error) {
-          console.error('Error getting token', error);
+          console.error("Error getting token", error);
         }
       }
     };

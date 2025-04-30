@@ -1,10 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { AuthProvider, useAuth } from '@/contexts/AuthContext';
-import Navigation from '@/components/Navigation';
-import NameForm from '@/components/NameForm';
-import NamesList from '@/components/NameList';
-import LoginPage from '@/components/LoginPage';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import Navigation from "@/components/Navigation";
+import NameForm from "@/components/NameForm";
+import NamesList from "@/components/NameList";
+import LoginPage from "@/components/LoginPage";
 // For testing purposes only
 // import DebugAuth from '@/components/DebugAuth';
 // import ConsoleDebugAuth from '@/components/ConsoleDebugAuth';
@@ -15,7 +15,7 @@ const ProtectedRoute = ({ children }) => {
   const location = useLocation();
   const [showLoading, setShowLoading] = useState(true);
   // This is a delay to avoid redirect loops during initialization
-   useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
       setShowLoading(false);
     }, 2000);
@@ -43,8 +43,8 @@ function AppContent() {
 
   // Initialize theme from localStorage or default to 'dark'
   useEffect(() => {
-    const theme = localStorage.getItem('theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', theme);
+    const theme = localStorage.getItem("theme") || "dark";
+    document.documentElement.setAttribute("data-theme", theme);
   }, []);
 
   return (
@@ -56,16 +56,22 @@ function AppContent() {
         <main className="container mx-auto p-4">
           <Routes>
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/" element={
-              <ProtectedRoute>
-                <NameForm />
-              </ProtectedRoute>
-            } />
-            <Route path="/names" element={
-              <ProtectedRoute>
-                <NamesList />
-              </ProtectedRoute>
-            } />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <NameForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/names"
+              element={
+                <ProtectedRoute>
+                  <NamesList />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </main>
       </div>

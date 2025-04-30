@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const Pagination = ({ currentPage, totalPages, onPageChange, isFirst, isLast }) => {
   // Calculate range of pages to show
@@ -36,7 +36,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isFirst, isLast }) 
       {getPageRange().map((page) => (
         <button
           key={page}
-          className={`join-item btn btn-sm ${currentPage === page ? 'btn-active' : ''}`}
+          className={`join-item btn btn-sm ${currentPage === page ? "btn-active" : ""}`}
           onClick={() => onPageChange(page)}
         >
           {page + 1}
