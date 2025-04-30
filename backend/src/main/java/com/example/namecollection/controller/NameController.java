@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.namecollection.dto.NameDTO;
 import com.example.namecollection.dto.NameResponseDTO;
+import com.example.namecollection.dto.NameSearchCriteriaDTO;
+import com.example.namecollection.dto.PageDTO;
 import com.example.namecollection.model.Name;
 import com.example.namecollection.service.NameService;
 
@@ -43,6 +45,13 @@ public class NameController {
     public ResponseEntity<List<NameResponseDTO>> getAllNames() {
         List<NameResponseDTO> names = nameService.getAllNames();
         return new ResponseEntity<>(names, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<PageDTO<NameResponseDTO>> searchNames(
+            @Valid NameSearchCriteriaDTO criteria) {
+        PageDTO<NameResponseDTO> page = nameService.getNames(criteria);
+        return new ResponseEntity<>(page, HttpStatus.OK);
     }
 
     @PostMapping
