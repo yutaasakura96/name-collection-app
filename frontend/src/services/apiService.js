@@ -5,8 +5,9 @@ import mockService from "@/services/mockService";
 const API_URL = import.meta.env.PROD
   ? import.meta.env.VITE_API_URL || "/api"
   : import.meta.env.VITE_API_URL || "http://localhost:8080/api";
-  // Create an axios instance with the given token
-  const createApiClient = (token) => {
+
+// Create an axios instance with the given token
+const createApiClient = (token) => {
   return axios.create({
     baseURL: API_URL,
     headers: {
@@ -18,8 +19,7 @@ const API_URL = import.meta.env.PROD
 };
 
 // Use mock service in development mode if VITE_USE_MOCK_API is true
-const useMockService =
-  !import.meta.env.PROD && import.meta.env.VITE_USE_MOCK_API === "true";
+const useMockService = !import.meta.env.PROD && import.meta.env.VITE_USE_MOCK_API === "true";
 
 // Service methods using either the axios instance or mock service
 const apiService = {
@@ -33,6 +33,29 @@ const apiService = {
       return response.data;
     } catch (error) {
       console.error("Error fetching names:", error);
+      throw error;
+    }
+  },
+
+  searchNames: async (criteria, token) => {
+    if (useMockService) {
+      return mockService.searchNames(criteria);
+    }
+    try {
+      const apiClient = createApiClient(token);
+      const queryParams = new URLSearchParams();
+
+      if (criteria.firstName) queryParams.append("firstName", criteria.firstName);
+      if (criteria.lastName) queryParams.append("lastName", criteria.lastName);
+      queryParams.append("page", criteria.page.toString());
+      queryParams.append("size", criteria.size.toString());
+      queryParams.append("sortBy", criteria.sortBy);
+      queryParams.append("sortDirection", criteria.sortDirection);
+
+      const response = await apiClient.get(`/names/search?${queryParams.toString()}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error searching names:", error);
       throw error;
     }
   },
