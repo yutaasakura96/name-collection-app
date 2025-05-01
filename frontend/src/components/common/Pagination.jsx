@@ -1,4 +1,5 @@
 import React from "react";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
 const Pagination = ({ currentPage, totalPages, onPageChange, isFirst, isLast }) => {
   // Calculate range of pages to show
@@ -25,12 +26,15 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isFirst, isLast }) 
 
   return (
     <div className="join">
+      <button className="join-item btn btn-md" disabled={isFirst} onClick={() => onPageChange(0)}>
+        <ChevronsLeft className="h-4 w-4" />
+      </button>
       <button
         className="join-item btn btn-md"
         disabled={isFirst}
         onClick={() => onPageChange(currentPage - 1)}
       >
-        «
+        <ChevronLeft className="h-4 w-4" />
       </button>
 
       {getPageRange().map((page) => (
@@ -48,7 +52,14 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isFirst, isLast }) 
         disabled={isLast}
         onClick={() => onPageChange(currentPage + 1)}
       >
-        »
+        <ChevronRight className="h-4 w-4" />
+      </button>
+      <button
+        className="join-item btn btn-md"
+        disabled={isLast}
+        onClick={() => onPageChange(totalPages - 1)}
+      >
+        <ChevronsRight className="h-4 w-4" />
       </button>
     </div>
   );
