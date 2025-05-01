@@ -26,7 +26,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isFirst, isLast }) 
   return (
     <div className="join">
       <button
-        className="join-item btn btn-sm"
+        className="join-item btn btn-md"
         disabled={isFirst}
         onClick={() => onPageChange(currentPage - 1)}
       >
@@ -36,7 +36,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isFirst, isLast }) 
       {getPageRange().map((page) => (
         <button
           key={page}
-          className={`join-item btn btn-sm ${currentPage === page ? "btn-active" : ""}`}
+          className={`join-item btn btn-md ${currentPage === page ? "btn-active btn-primary" : ""}`}
           onClick={() => onPageChange(page)}
         >
           {page + 1}
@@ -44,7 +44,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange, isFirst, isLast }) 
       ))}
 
       <button
-        className="join-item btn btn-sm"
+        className="join-item btn btn-md"
         disabled={isLast}
         onClick={() => onPageChange(currentPage + 1)}
       >
