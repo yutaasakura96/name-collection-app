@@ -312,28 +312,61 @@ const NamesList = () => {
                 <tr>
                   <th className="w-16">ID</th>
                   <th className="w-36">
-                    <button
-                      className="flex items-center gap-1 hover:text-primary transition-colors"
-                      onClick={() => handleSort("firstName")}
+                    <div
+                      className="tooltip tooltip-bottom"
+                      data-tip={
+                        sorting.sortBy === "firstName"
+                          ? `Sort by first name ${
+                              sorting.sortDirection === "ASC" ? "descending" : "ascending"
+                            }`
+                          : "Sort by first name ascending"
+                      }
                     >
-                      First Name {getSortIcon("firstName")}
-                    </button>
+                      <button
+                        className="flex items-center gap-1 hover:text-primary transition-colors"
+                        onClick={() => handleSort("firstName")}
+                      >
+                        First Name {getSortIcon("firstName")}
+                      </button>
+                    </div>
                   </th>
                   <th className="w-36">
-                    <button
-                      className="flex items-center gap-1 hover:text-primary transition-colors"
-                      onClick={() => handleSort("lastName")}
+                    <div
+                      className="tooltip tooltip-bottom"
+                      data-tip={
+                        sorting.sortBy === "lastName"
+                          ? `Sort by last name ${
+                              sorting.sortDirection === "ASC" ? "descending" : "ascending"
+                            }`
+                          : "Sort by last name ascending"
+                      }
                     >
-                      Last Name {getSortIcon("lastName")}
-                    </button>
+                      <button
+                        className="flex items-center gap-1 hover:text-primary transition-colors"
+                        onClick={() => handleSort("lastName")}
+                      >
+                        Last Name {getSortIcon("lastName")}
+                      </button>
+                    </div>
                   </th>
                   <th className="w-36">
-                    <button
-                      className="flex items-center gap-1 hover:text-primary transition-colors"
-                      onClick={() => handleSort("createdAt")}
+                    <div
+                      className="tooltip tooltip-bottom"
+                      data-tip={
+                        sorting.sortBy === "createdAt"
+                          ? `Sort by date ${
+                              sorting.sortDirection === "ASC" ? "descending" : "ascending"
+                            }`
+                          : "Sort by date ascending"
+                      }
                     >
-                      Added On {getSortIcon("createdAt")}
-                    </button>
+                      <button
+                        className="flex items-center gap-1 hover:text-primary transition-colors"
+                        onClick={() => handleSort("createdAt")}
+                      >
+                        Added On {getSortIcon("createdAt")}
+                      </button>
+                    </div>
                   </th>
                   <th className="w-20"></th>
                 </tr>
