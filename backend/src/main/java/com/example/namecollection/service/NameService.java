@@ -37,17 +37,10 @@ public class NameService {
 
         Page<Name> resultPage;
 
-        if (StringUtils.hasText(criteria.getFirstName())
-                && StringUtils.hasText(criteria.getLastName())) {
+        if (StringUtils.hasText(criteria.getSearchTerm())) {
             resultPage = nameRepository
-                    .findByFirstNameContainingIgnoreCaseAndLastNameContainingIgnoreCase(
-                            criteria.getFirstName(), criteria.getLastName(), pageable);
-        } else if (StringUtils.hasText(criteria.getFirstName())) {
-            resultPage = nameRepository.findByFirstNameContainingIgnoreCase(criteria.getFirstName(),
-                    pageable);
-        } else if (StringUtils.hasText(criteria.getLastName())) {
-            resultPage = nameRepository.findByLastNameContainingIgnoreCase(criteria.getLastName(),
-                    pageable);
+                    .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
+                            criteria.getSearchTerm(), criteria.getSearchTerm(), pageable);
         } else {
             resultPage = nameRepository.findAll(pageable);
         }

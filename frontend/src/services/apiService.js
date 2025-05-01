@@ -45,8 +45,7 @@ const apiService = {
       const apiClient = createApiClient(token);
       const queryParams = new URLSearchParams();
 
-      if (criteria.firstName) queryParams.append("firstName", criteria.firstName);
-      if (criteria.lastName) queryParams.append("lastName", criteria.lastName);
+      if (criteria.searchTerm) queryParams.append("searchTerm", criteria.searchTerm);
       queryParams.append("page", criteria.page.toString());
       queryParams.append("size", criteria.size.toString());
       queryParams.append("sortBy", criteria.sortBy);

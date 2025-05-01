@@ -4,8 +4,7 @@ import lombok.Data;
 
 @Data
 public class NameSearchCriteriaDTO {
-    private String firstName;
-    private String lastName;
+    private String searchTerm;
     private String sortBy = "createdAt";
     private String sortDirection = "DESC";
     private int page = 0;

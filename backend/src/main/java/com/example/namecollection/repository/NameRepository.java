@@ -20,10 +20,6 @@ public interface NameRepository extends JpaRepository<Name, Long> {
     @Query("DELETE FROM Name n WHERE n.uuid = :uuid")
     void deleteByUuid(@Param("uuid") String uuid);
 
-    Page<Name> findByFirstNameContainingIgnoreCase(String firstName, Pageable pageable);
-
-    Page<Name> findByLastNameContainingIgnoreCase(String lastName, Pageable pageable);
-
-    Page<Name> findByFirstNameContainingIgnoreCaseAndLastNameContainingIgnoreCase(String firstName,
-            String lastName, Pageable pageable);
+    Page<Name> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(String searchTerm,
+            String searchTerm2, Pageable pageable);
 }

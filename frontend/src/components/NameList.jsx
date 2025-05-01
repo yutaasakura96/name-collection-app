@@ -36,14 +36,12 @@ const NamesList = () => {
 
   // Filtering state
   const [filters, setFilters] = useState({
-    firstName: "",
-    lastName: "",
+    searchTerm: "",
   });
 
   // Search form state (for filters)
   const [searchForm, setSearchForm] = useState({
-    firstName: "",
-    lastName: "",
+    searchTerm: "",
   });
 
   // Modal states
@@ -187,23 +185,20 @@ const NamesList = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     setFilters({
-      firstName: searchForm.firstName,
-      lastName: searchForm.lastName,
+      searchTerm: searchForm.searchTerm,
     });
     setPagination((prev) => ({
       ...prev,
-      pageNumber: 0, // Reset to first page when search changes
+      pageNumber: 0,
     }));
   };
 
   const handleReset = () => {
     setSearchForm({
-      firstName: "",
-      lastName: "",
+      searchTerm: "",
     });
     setFilters({
-      firstName: "",
-      lastName: "",
+      searchTerm: "",
     });
     setSorting({
       sortBy: "createdAt",
@@ -241,36 +236,23 @@ const NamesList = () => {
         <form onSubmit={handleSearch} className="flex flex-wrap gap-4 items-end">
           <div className="form-control">
             <label className="label">
-              <span className="label-text">First Name</span>
+              <span className="label-text">Search Name</span>
             </label>
             <input
               type="text"
-              placeholder="Filter by first name"
+              placeholder="Search by first name or last name"
               className="input input-bordered input-sm w-full max-w-xs"
-              value={searchForm.firstName}
-              onChange={(e) => setSearchForm({ ...searchForm, firstName: e.target.value })}
+              value={searchForm.searchTerm}
+              onChange={(e) => setSearchForm({ ...searchForm, searchTerm: e.target.value })}
             />
           </div>
 
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Last Name</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Filter by last name"
-              className="input input-bordered input-sm w-full max-w-xs"
-              value={searchForm.lastName}
-              onChange={(e) => setSearchForm({ ...searchForm, lastName: e.target.value })}
-            />
-          </div>
-
-          <div className="flex gap-2">
+          <div className="flex gap-5">
             <button type="submit" className="btn btn-primary btn-sm">
               <Search className="h-4 w-4 mr-1" />
               Search
             </button>
-            <button type="button" onClick={handleReset} className="btn btn-ghost btn-sm">
+            <button type="button" onClick={handleReset} className="btn btn-soft btn-sm">
               <RotateCcw className="h-4 w-4 mr-1" />
               Reset
             </button>
@@ -313,8 +295,8 @@ const NamesList = () => {
             ></path>
           </svg>
           <span>
-            {filters.firstName || filters.lastName
-              ? "No names match the current filters."
+            {filters.searchTerm
+              ? "No names match the current search."
               : "No names have been added yet."}
           </span>
         </div>

@@ -36,13 +36,13 @@ const sortBy = (array, field, direction) => {
 // Helper function to filter array
 const filterNames = (array, criteria) => {
   return array.filter((item) => {
-    const matchesFirstName =
-      !criteria.firstName ||
-      item.firstName.toLowerCase().includes(criteria.firstName.toLowerCase());
-    const matchesLastName =
-      !criteria.lastName || item.lastName.toLowerCase().includes(criteria.lastName.toLowerCase());
+    if (!criteria.searchTerm) return true;
 
-    return matchesFirstName && matchesLastName;
+    const searchTerm = criteria.searchTerm.toLowerCase();
+    return (
+      item.firstName.toLowerCase().includes(searchTerm) ||
+      item.lastName.toLowerCase().includes(searchTerm)
+    );
   });
 };
 
