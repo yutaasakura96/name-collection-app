@@ -211,11 +211,12 @@ const NamesList = () => {
   };
 
   const getSortIcon = (field) => {
-    if (sorting.sortBy !== field) return null;
+    const isActive = sorting.sortBy === field;
+    const iconColor = isActive ? "text-primary" : "text-base-content/30";
     return sorting.sortDirection === "ASC" ? (
-      <ChevronUp className="inline-block h-4 w-4" />
+      <ChevronUp className={`inline-block h-4 w-4 ${iconColor}`} />
     ) : (
-      <ChevronDown className="inline-block h-4 w-4" />
+      <ChevronDown className={`inline-block h-4 w-4 ${iconColor}`} />
     );
   };
 
@@ -312,7 +313,7 @@ const NamesList = () => {
                   <th className="w-16">ID</th>
                   <th className="w-36">
                     <button
-                      className="flex items-center gap-1"
+                      className="flex items-center gap-1 hover:text-primary transition-colors"
                       onClick={() => handleSort("firstName")}
                     >
                       First Name {getSortIcon("firstName")}
@@ -320,7 +321,7 @@ const NamesList = () => {
                   </th>
                   <th className="w-36">
                     <button
-                      className="flex items-center gap-1"
+                      className="flex items-center gap-1 hover:text-primary transition-colors"
                       onClick={() => handleSort("lastName")}
                     >
                       Last Name {getSortIcon("lastName")}
@@ -328,7 +329,7 @@ const NamesList = () => {
                   </th>
                   <th className="w-36">
                     <button
-                      className="flex items-center gap-1"
+                      className="flex items-center gap-1 hover:text-primary transition-colors"
                       onClick={() => handleSort("createdAt")}
                     >
                       Added On {getSortIcon("createdAt")}
