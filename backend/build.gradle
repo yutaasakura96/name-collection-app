@@ -1,52 +1,76 @@
+// Plugins Configuration
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.4'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
+// Project Metadata and Java Configuration
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
+// Configure Java version and toolchain
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
+// Repository Configuration
+repositories {
+	mavenCentral()
+}
+
+// Build Configuration
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
 }
 
-repositories {
-	mavenCentral()
-}
-
+// Dependencies Configuration
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// Spring Boot Core Dependencies
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-  implementation 'org.springframework.boot:spring-boot-starter-security'
-  implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-  implementation 'org.springframework.security:spring-security-oauth2-jose'
-  implementation 'me.paulschwarz:spring-dotenv:3.0.0'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-  implementation 'org.flywaydb:flyway-core'
-  implementation 'org.flywaydb:flyway-database-postgresql'
-	compileOnly 'org.projectlombok:lombok:1.18.38'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// Spring Security Dependencies
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+	implementation 'org.springframework.security:spring-security-oauth2-jose'
+
+	// Database Dependencies
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.flywaydb:flyway-database-postgresql'
 	runtimeOnly 'org.postgresql:postgresql'
+
+	// Development Tools
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	implementation 'me.paulschwarz:spring-dotenv:3.0.0'
+
+	// Lombok Configuration
+	compileOnly 'org.projectlombok:lombok:1.18.38'
 	annotationProcessor 'org.projectlombok:lombok:1.18.38'
+
+	// Testing Dependencies
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+	testImplementation 'org.mockito:mockito-core'
+	testImplementation 'org.mockito:mockito-junit-jupiter'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+  testRuntimeOnly 'com.h2database:h2'
 	testCompileOnly 'org.projectlombok:lombok:1.18.38'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.38'
 }
 
+// Task Configurations
 tasks.named('test') {
 	useJUnitPlatform()
 }
 
+// Configure the bootJar task for deployment
 bootJar {
 	archiveBaseName.set("app")
 	archiveVersion.set("")
