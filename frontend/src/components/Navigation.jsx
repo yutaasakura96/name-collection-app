@@ -1,9 +1,42 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Shield, LogOut, Settings, User } from "lucide-react";
+import RequirePermission from "@/components/common/RequirePermission";
 
 const Navigation = ({ onAddNameClick }) => {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, userRoles, userPermissions, getHighestRole } = useAuth();
+  const [showRoleInfo, setShowRoleInfo] = useState(false);
+
+  // Get the user's highest role for display
+  const highestRole = getHighestRole();
+
+  // Function to get role badge color
+  const getRoleBadgeColor = (role) => {
+    switch (role) {
+      case "admin":
+        return "badge-primary";
+      case "editor":
+        return "badge-secondary";
+      case "viewer":
+        return "badge-accent";
+      default:
+        return "badge-neutral";
+    }
+  };
+
+  const getRoleIcon = (role) => {
+    switch (role) {
+      case "admin":
+        return <Settings className="h-4 w-4" />;
+      case "editor":
+        return <PlusCircle className="h-4 w-4" />;
+      case "viewer":
+        return <User className="h-4 w-4" />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="navbar bg-base-100 shadow-lg mb-8">
@@ -11,17 +44,33 @@ const Navigation = ({ onAddNameClick }) => {
         <Link to="/" className="btn btn-ghost text-xl">
           Name Collection App
         </Link>
+
+        {/* Role badge */}
+        {isAuthenticated && highestRole !== "unauthenticated" && (
+          <div
+            className={`badge badge-sm ${getRoleBadgeColor(
+              highestRole
+            )} ml-2 gap-1 px-2 py-3 cursor-pointer`}
+            onClick={() => setShowRoleInfo(!showRoleInfo)}
+          >
+            {getRoleIcon(highestRole)}
+            <span className="capitalize">{highestRole}</span>
+          </div>
+        )}
       </div>
 
       {isAuthenticated && (
         <div className="flex-none">
           <ul className="menu menu-horizontal px-5 gap-5">
-            <li>
-              <button onClick={onAddNameClick} className="btn hover:btn-primary">
-                <PlusCircle className="h-5 w-5 mr-2" />
-                Add Name
-              </button>
-            </li>
+            <RequirePermission permission="create:names">
+              <li>
+                <button onClick={onAddNameClick} className="btn hover:btn-primary">
+                  <PlusCircle className="h-5 w-5 mr-2" />
+                  <span className="hidden sm:inline">Add Name</span>
+                </button>
+              </li>
+            </RequirePermission>
+
             <li>
               <label className="swap swap-rotate">
                 <input
@@ -61,8 +110,44 @@ const Navigation = ({ onAddNameClick }) => {
                   <div className="font-semibold text-sm">{user?.name}</div>
                   <div className="text-xs">{user?.email}</div>
                 </li>
+
+                {showRoleInfo && (
+                  <li>
+                    <div className="p-2 my-1 bg-base-200 rounded-md text-xs">
+                      <div className="font-semibold mb-1 flex items-center gap-1">
+                        <Shield className="h-3 w-3" /> Your Access Level
+                      </div>
+                      <div className="mb-1">
+                        Roles:{" "}
+                        {userRoles.length > 0
+                          ? userRoles.map((r) => (
+                              <span key={r} className="badge badge-xs badge-outline ml-1">
+                                {r}
+                              </span>
+                            ))
+                          : "None"}
+                      </div>
+                      <div>
+                        Permissions:
+                        <div className="ml-1 mt-1 space-y-1">
+                          {userPermissions.length > 0
+                            ? userPermissions.map((p) => (
+                                <div key={p} className="badge badge-xs badge-outline">
+                                  {p}
+                                </div>
+                              ))
+                            : "None"}
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                )}
+
                 <li>
-                  <button onClick={() => logout()}>Logout</button>
+                  <button onClick={() => logout()} className="flex items-center">
+                    <LogOut className="h-4 w-4 mr-1" />
+                    Logout
+                  </button>
                 </li>
               </ul>
             </li>
