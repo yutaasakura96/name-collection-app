@@ -11,6 +11,46 @@ const simulateError = () => {
   }
 };
 
+// Mock user roles and permissions for development
+const mockRoles = {
+  viewer: {
+    permissions: ["read:names"],
+  },
+  editor: {
+    permissions: ["read:names", "create:names", "update:names"],
+  },
+  admin: {
+    permissions: ["read:names", "create:names", "update:names", "delete:names"],
+  },
+};
+
+// Get the role from local storage or default to editor
+const getMockUserRole = () => {
+  const storedRole = localStorage.getItem("mock_user_role") || "editor";
+  return storedRole;
+};
+
+// Set the mock user role in local storage
+export const setMockUserRole = (role) => {
+  if (mockRoles[role]) {
+    localStorage.setItem("mock_user_role", role);
+    return true;
+  }
+  return false;
+};
+
+// Get the permissions for the current mock user role
+const getMockUserPermissions = () => {
+  const role = getMockUserRole();
+  return mockRoles[role]?.permissions || [];
+};
+
+// Check if the mock user has a specific permission
+const hasMockPermission = (permission) => {
+  const permissions = getMockUserPermissions();
+  return permissions.includes(permission);
+};
+
 // Helper function to sort by field
 const sortBy = (array, field, direction) => {
   return [...array].sort((a, b) => {
@@ -57,12 +97,37 @@ const mockService = {
   getAllNames: async () => {
     await delay(500);
     simulateError();
+
+    // Check if user has permission to view names
+    if (!hasMockPermission("read:names")) {
+      throw {
+        response: {
+          status: 403,
+          data: {
+            message: "You don't have permission to view names.",
+          },
+        },
+      };
+    }
+
     return [...mockNames];
   },
 
   searchNames: async (criteria) => {
     await delay(500);
     simulateError();
+
+    // Check if user has permission to view names
+    if (!hasMockPermission("read:names")) {
+      throw {
+        response: {
+          status: 403,
+          data: {
+            message: "You don't have permission to view names.",
+          },
+        },
+      };
+    }
 
     // Apply filters
     let filteredNames = filterNames(mockNames, criteria);
@@ -90,6 +155,19 @@ const mockService = {
   addName: async (firstName, lastName) => {
     await delay(500);
     simulateError();
+
+    // Check if user has permission to add names
+    if (!hasMockPermission("create:names")) {
+      throw {
+        response: {
+          status: 403,
+          data: {
+            message: "You don't have permission to add names.",
+          },
+        },
+      };
+    }
+
     const newName = {
       uuid: uuidv4(),
       firstName,
@@ -103,9 +181,29 @@ const mockService = {
   updateName: async (uuid, firstName, lastName) => {
     await delay(500);
     simulateError();
+
+    // Check if user has permission to update names
+    if (!hasMockPermission("update:names")) {
+      throw {
+        response: {
+          status: 403,
+          data: {
+            message: "You don't have permission to update names.",
+          },
+        },
+      };
+    }
+
     const index = mockNames.findIndex((name) => name.uuid === uuid);
     if (index === -1) {
-      throw new Error("Name not found");
+      throw {
+        response: {
+          status: 404,
+          data: {
+            message: "Name not found",
+          },
+        },
+      };
     }
     mockNames[index] = {
       ...mockNames[index],
@@ -118,12 +216,45 @@ const mockService = {
   deleteName: async (uuid) => {
     await delay(500);
     simulateError();
+
+    // Check if user has permission to delete names
+    if (!hasMockPermission("delete:names")) {
+      throw {
+        response: {
+          status: 403,
+          data: {
+            message: "You don't have permission to delete names.",
+          },
+        },
+      };
+    }
+
     const index = mockNames.findIndex((name) => name.uuid === uuid);
     if (index === -1) {
-      throw new Error("Name not found");
+      throw {
+        response: {
+          status: 404,
+          data: {
+            message: "Name not found",
+          },
+        },
+      };
     }
     mockNames.splice(index, 1);
     return uuid;
+  },
+
+  // Get user permissions and roles
+  getUserPermissions: async () => {
+    await delay(300);
+
+    const role = getMockUserRole();
+    const permissions = getMockUserPermissions();
+
+    return {
+      roles: [role],
+      permissions: permissions,
+    };
   },
 };
 
