@@ -18,6 +18,57 @@ const createApiClient = (token) => {
   });
 };
 
+// Create error handler for permissions
+const handleApiError = (error) => {
+  if (error.response) {
+    // Handle specific error status codes
+    switch (error.response.status) {
+      case 401:
+        console.error("Authentication error:", error);
+        return Promise.reject({
+          message: "You are not authenticated. Please log in again.",
+          status: 401,
+          response: error.response,
+        });
+      case 403:
+        console.error("Permission denied:", error);
+        return Promise.reject({
+          message: "You don't have permission to perform this action.",
+          status: 403,
+          response: error.response,
+        });
+      case 404:
+        console.error("Resource not found:", error);
+        return Promise.reject({
+          message: "The requested resource was not found.",
+          status: 404,
+          response: error.response,
+        });
+      default:
+        console.error("API error:", error);
+        return Promise.reject({
+          message: error.response.data?.message || "An unexpected error occurred.",
+          status: error.response.status,
+          response: error.response,
+        });
+    }
+  } else if (error.request) {
+    // The request was made but no response was received
+    console.error("Network error:", error);
+    return Promise.reject({
+      message: "Network error. Please check your connection.",
+      status: 0,
+    });
+  } else {
+    // Something happened in setting up the request
+    console.error("Request error:", error);
+    return Promise.reject({
+      message: "Failed to send request.",
+      status: 0,
+    });
+  }
+};
+
 // Use mock service in development mode if VITE_USE_MOCK_API is true
 const useMockService = !import.meta.env.PROD && import.meta.env.VITE_USE_MOCK_API === "true";
 
@@ -32,8 +83,7 @@ const apiService = {
       const response = await apiClient.get("/names");
       return response.data;
     } catch (error) {
-      console.error("Error fetching names:", error);
-      throw error;
+      return handleApiError(error);
     }
   },
 
@@ -54,8 +104,7 @@ const apiService = {
       const response = await apiClient.get(`/names/search?${queryParams.toString()}`);
       return response.data;
     } catch (error) {
-      console.error("Error searching names:", error);
-      throw error;
+      return handleApiError(error);
     }
   },
 
@@ -71,8 +120,7 @@ const apiService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Error adding name:", error);
-      throw error;
+      return handleApiError(error);
     }
   },
 
@@ -88,8 +136,7 @@ const apiService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Error updating name:", error);
-      throw error;
+      return handleApiError(error);
     }
   },
 
@@ -102,8 +149,47 @@ const apiService = {
       await apiClient.delete(`/names/${uuid}`);
       return uuid;
     } catch (error) {
-      console.error("Error deleting name:", error);
-      throw error;
+      return handleApiError(error);
+    }
+  },
+
+  // Get user permissions from API
+  getUserPermissions: async (token) => {
+    if (useMockService) {
+      return {
+        permissions: ["read:names", "create:names", "update:names"],
+        roles: ["editor"],
+      };
+    }
+    try {
+      const apiClient = createApiClient(token);
+      const response = await apiClient.get("/names/permissions");
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
+    }
+  },
+
+  // Get public application info
+  getAppInfo: async () => {
+    if (useMockService) {
+      return {
+        name: "Name Collection App",
+        version: "1.0.0",
+        description: "A simple application to collect and manage names",
+        roles: {
+          viewer: "Can view names",
+          editor: "Can create and edit names",
+          admin: "Can delete names and manage the application",
+        },
+      };
+    }
+    try {
+      const apiClient = createApiClient();
+      const response = await apiClient.get("/public/info");
+      return response.data;
+    } catch (error) {
+      return handleApiError(error);
     }
   },
 };
