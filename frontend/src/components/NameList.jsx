@@ -4,10 +4,11 @@ import apiService from "@/services/apiService";
 import { validateName, validateNameForm } from "@/utils/validation";
 import ConfirmationModal from "@/components/common/ConfirmationModal";
 import Pagination from "@/components/common/Pagination";
-import { ChevronUp, ChevronDown, Search, RotateCcw, Info } from "lucide-react";
+import RequirePermission from "@/components/common/RequirePermission";
+import { ChevronUp, ChevronDown, Search, RotateCcw, Info, Shield, AlertCircle } from "lucide-react";
 
 const NamesList = () => {
-  const { token } = useAuth();
+  const { token, userPermissions, userRoles, hasPermission } = useAuth();
   const [names, setNames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -79,6 +80,9 @@ const NamesList = () => {
   // Add state for copy feedback
   const [copiedUuid, setCopiedUuid] = useState(null);
 
+  // State for displaying permissions info
+  const [showPermissionsInfo, setShowPermissionsInfo] = useState(false);
+
   const fetchNames = useCallback(async () => {
     setLoading(true);
     try {
@@ -101,7 +105,11 @@ const NamesList = () => {
       });
       setError("");
     } catch (error) {
-      setError(error.message || "Failed to fetch names. Please try again later.");
+      if (error.response && error.response.status === 403) {
+        setError("You don't have permission to view names. Please contact your administrator.");
+      } else {
+        setError(error.message || "Failed to fetch names. Please try again later.");
+      }
     } finally {
       setLoading(false);
     }
@@ -148,7 +156,11 @@ const NamesList = () => {
       setEditForm({ firstName: "", lastName: "" });
       setEditValidationErrors({ firstName: "", lastName: "" });
     } catch (error) {
-      setError(error.message || "Failed to update name. Please try again later.");
+      if (error.response && error.response.status === 403) {
+        setError("You don't have permission to update names. Please contact your administrator.");
+      } else {
+        setError(error.message || "Failed to update name. Please try again later.");
+      }
     }
   };
 
@@ -164,7 +176,11 @@ const NamesList = () => {
       await apiService.deleteName(uuid, token);
       await fetchNames();
     } catch (error) {
-      setError(error.message || "Failed to delete name. Please try again later.");
+      if (error.response && error.response.status === 403) {
+        setError("You don't have permission to delete names. Please contact your administrator.");
+      } else {
+        setError(error.message || "Failed to delete name. Please try again later.");
+      }
     }
   };
 
@@ -230,7 +246,60 @@ const NamesList = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">All Names</h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">All Names</h2>
+
+        <div className="flex items-center gap-2">
+          <button
+            className="btn btn-circle btn-sm btn-ghost tooltip tooltip-left"
+            data-tip="View your permissions"
+            onClick={() => setShowPermissionsInfo(!showPermissionsInfo)}
+          >
+            <Shield size={16} />
+          </button>
+
+          <RequirePermission permission="create:names">
+            <button
+              className="btn btn-primary btn-sm"
+              onClick={() => document.getElementById("name-form-modal").showModal()}
+            >
+              <span className="hidden sm:inline">Add Name</span>
+              <span className="sm:hidden">+</span>
+            </button>
+          </RequirePermission>
+        </div>
+      </div>
+
+      {/* Permissions info box */}
+      {showPermissionsInfo && (
+        <div className="alert mb-6 shadow-lg">
+          <AlertCircle className="h-6 w-6" />
+          <div>
+            <h3 className="font-bold">Your Permissions</h3>
+            <div className="text-xs">
+              <p>Roles: {userRoles.length > 0 ? userRoles.join(", ") : "None"}</p>
+              <p>Permissions: {userPermissions.length > 0 ? userPermissions.join(", ") : "None"}</p>
+              <ul className="mt-1 list-disc list-inside">
+                <li className={hasPermission("read:names") ? "text-success" : "text-error"}>
+                  {hasPermission("read:names") ? "Can" : "Cannot"} view names
+                </li>
+                <li className={hasPermission("create:names") ? "text-success" : "text-error"}>
+                  {hasPermission("create:names") ? "Can" : "Cannot"} create names
+                </li>
+                <li className={hasPermission("update:names") ? "text-success" : "text-error"}>
+                  {hasPermission("update:names") ? "Can" : "Cannot"} edit names
+                </li>
+                <li className={hasPermission("delete:names") ? "text-success" : "text-error"}>
+                  {hasPermission("delete:names") ? "Can" : "Cannot"} delete names
+                </li>
+              </ul>
+            </div>
+          </div>
+          <button className="btn btn-sm" onClick={() => setShowPermissionsInfo(false)}>
+            Close
+          </button>
+        </div>
+      )}
 
       {/* Search/Filter Form */}
       <div className="mb-6 p-4 bg-base-200 rounded-lg shadow-sm">
@@ -368,7 +437,7 @@ const NamesList = () => {
                       </button>
                     </div>
                   </th>
-                  <th className="w-20"></th>
+                  <th className="w-20">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -469,19 +538,23 @@ const NamesList = () => {
                           </button>
                         </div>
                       ) : (
-                        <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                          <button
-                            onClick={() => handleEdit(name)}
-                            className="btn btn-primary btn-sm"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleShowDeleteConfirmation(name.uuid)}
-                            className="btn btn-error btn-sm"
-                          >
-                            Delete
-                          </button>
+                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <RequirePermission permission="update:names">
+                            <button
+                              onClick={() => handleEdit(name)}
+                              className="btn btn-primary btn-sm"
+                            >
+                              Edit
+                            </button>
+                          </RequirePermission>
+                          <RequirePermission permission="delete:names">
+                            <button
+                              onClick={() => handleShowDeleteConfirmation(name.uuid)}
+                              className="btn btn-error btn-sm"
+                            >
+                              Delete
+                            </button>
+                          </RequirePermission>
                         </div>
                       )}
                     </td>
