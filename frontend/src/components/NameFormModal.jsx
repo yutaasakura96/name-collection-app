@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import apiService from "@/services/apiService";
 import { validateName, validateNameForm } from "@/utils/validation";
 
-const NameForm = () => {
+const NameFormModal = ({ isOpen, onClose, onNameAdded }) => {
   const { token } = useAuth();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -32,14 +32,19 @@ const NameForm = () => {
     setIsSubmitting(true);
 
     try {
-      await apiService.addName(firstName, lastName, token);
+      const newName = await apiService.addName(firstName, lastName, token);
       setSuccess(true);
       setFirstName("");
       setLastName("");
 
+      if (onNameAdded) {
+        onNameAdded(newName);
+      }
+
       setTimeout(() => {
         setSuccess(false);
-      }, 3000);
+        onClose();
+      }, 1500);
     } catch (error) {
       setError(error.message || "Failed to submit name. Please try again.");
     } finally {
@@ -47,12 +52,18 @@ const NameForm = () => {
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <div className="card max-w-md mx-auto bg-base-100 shadow-xl">
-      <div className="card-body">
-        <h2 className="card-title text-2xl font-bold mb-6 text-center text-base-content">
-          Add New Name
-        </h2>
+    <div className="modal modal-open">
+      <div className="modal-box max-w-md">
+        <button
+          className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+          onClick={onClose}
+        >
+          ✕
+        </button>
+        <h2 className="text-2xl font-bold mb-6 text-center text-base-content">Add New Name</h2>
 
         {error && (
           <div className="alert alert-error mb-4">
@@ -145,17 +156,28 @@ const NameForm = () => {
             )}
           </div>
 
-          <button
-            type="submit"
-            className={`btn btn-primary w-full ${isSubmitting ? "loading" : ""}`}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </button>
+          <div className="modal-action">
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={onClose}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className={`btn btn-primary ${isSubmitting ? "loading" : ""}`}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </button>
+          </div>
         </form>
       </div>
+      <div className="modal-backdrop" onClick={onClose}></div>
     </div>
   );
 };
 
-export default NameForm;
+export default NameFormModal;

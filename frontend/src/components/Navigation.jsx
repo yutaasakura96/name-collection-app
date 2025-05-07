@@ -1,8 +1,8 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { PlusCircle } from "lucide-react";
 
-const Navigation = () => {
-  const location = useLocation();
+const Navigation = ({ onAddNameClick }) => {
   const { isAuthenticated, user, logout } = useAuth();
 
   return (
@@ -17,14 +17,10 @@ const Navigation = () => {
         <div className="flex-none">
           <ul className="menu menu-horizontal px-5 gap-5">
             <li>
-              <Link to="/" className={`btn ${location.pathname === "/" ? "active" : ""}`}>
+              <button onClick={onAddNameClick} className="btn hover:btn-primary">
+                <PlusCircle className="h-5 w-5 mr-2" />
                 Add Name
-              </Link>
-            </li>
-            <li>
-              <Link to="/names" className={`btn ${location.pathname === "/names" ? "active" : ""}`}>
-                View Names
-              </Link>
+              </button>
             </li>
             <li>
               <label className="swap swap-rotate">

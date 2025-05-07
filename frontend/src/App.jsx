@@ -2,9 +2,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "r
 import { useEffect, useState } from "react";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Navigation from "@/components/Navigation";
-import NameForm from "@/components/NameForm";
 import NamesList from "@/components/NameList";
 import LoginPage from "@/components/LoginPage";
+import NameFormModal from "@/components/NameFormModal";
 // For testing purposes only
 // import DebugAuth from '@/components/DebugAuth';
 // import ConsoleDebugAuth from '@/components/ConsoleDebugAuth';
@@ -40,6 +40,13 @@ const ProtectedRoute = ({ children }) => {
 
 function AppContent() {
   const { isAuthenticated } = useAuth();
+  const [isNameFormOpen, setIsNameFormOpen] = useState(false);
+  const [namesUpdated, setNamesUpdated] = useState(false);
+
+  // Function to handle name addition
+  const handleNameAdded = () => {
+    setNamesUpdated((prev) => !prev);
+  };
 
   // Initialize theme from localStorage or default to 'dark'
   useEffect(() => {
@@ -50,9 +57,16 @@ function AppContent() {
   return (
     <Router>
       <div className="min-h-screen bg-base-200">
-        {isAuthenticated && <Navigation />}
+        {isAuthenticated && <Navigation onAddNameClick={() => setIsNameFormOpen(true)} />}
         {/* For testing purposes only */}
         {/* <DebugAuth /> */}
+        {/* Name Form Modal */}
+        <NameFormModal
+          isOpen={isNameFormOpen}
+          onClose={() => setIsNameFormOpen(false)}
+          onNameAdded={handleNameAdded}
+        />
+
         <main className="container mx-auto p-4">
           <Routes>
             <Route path="/login" element={<LoginPage />} />
@@ -60,18 +74,14 @@ function AppContent() {
               path="/"
               element={
                 <ProtectedRoute>
-                  <NameForm />
+                  <NamesList
+                    key={namesUpdated ? "updated" : "initial"}
+                    onAddNameClick={() => setIsNameFormOpen(true)}
+                  />
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/names"
-              element={
-                <ProtectedRoute>
-                  <NamesList />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/names" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
       </div>
