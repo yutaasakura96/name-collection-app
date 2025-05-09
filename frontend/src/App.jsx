@@ -7,7 +7,8 @@ import {
   Link,
 } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/useAuth";
 import Navigation from "@/components/Navigation";
 import NamesList from "@/components/NameList";
 import LoginPage from "@/components/LoginPage";

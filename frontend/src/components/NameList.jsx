@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/useAuth";
 import apiService from "@/services/apiService";
 import { validateName, validateNameForm } from "@/utils/validation";
 import ConfirmationModal from "@/components/common/ConfirmationModal";
@@ -472,7 +472,7 @@ const NamesList = () => {
                     </td>
                     <td className="px-4">
                       {editingId === name.uuid ? (
-                        <div className="form-control">
+                        <div className="form-control w-32">
                           <input
                             type="text"
                             value={editForm.firstName}
@@ -483,12 +483,12 @@ const NamesList = () => {
                                 firstName: validateName(e.target.value, "First name"),
                               }));
                             }}
-                            className={`input input-bordered input-sm w-32 ${
+                            className={`input input-bordered input-sm ${
                               editValidationErrors.firstName ? "input-error" : ""
                             }`}
                           />
                           {editValidationErrors.firstName && (
-                            <span className="text-error text-xs mt-1">
+                            <span className="text-error text-xs mt-1 block">
                               {editValidationErrors.firstName}
                             </span>
                           )}
@@ -499,7 +499,7 @@ const NamesList = () => {
                     </td>
                     <td className="px-4">
                       {editingId === name.uuid ? (
-                        <div className="form-control">
+                        <div className="form-control w-32">
                           <input
                             type="text"
                             value={editForm.lastName}
@@ -510,12 +510,12 @@ const NamesList = () => {
                                 lastName: validateName(e.target.value, "Last name"),
                               }));
                             }}
-                            className={`input input-bordered input-sm w-32 ${
+                            className={`input input-bordered input-sm ${
                               editValidationErrors.lastName ? "input-error" : ""
                             }`}
                           />
                           {editValidationErrors.lastName && (
-                            <span className="text-error text-xs mt-1">
+                            <span className="text-error text-xs mt-1 block">
                               {editValidationErrors.lastName}
                             </span>
                           )}

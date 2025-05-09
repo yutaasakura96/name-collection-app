@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/useAuth";
 import apiService from "@/services/apiService";
 import { validateName, validateNameForm } from "@/utils/validation";
 import RequirePermission from "@/components/common/RequirePermission";
