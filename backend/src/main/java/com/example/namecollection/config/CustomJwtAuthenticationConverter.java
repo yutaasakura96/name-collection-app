@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.stream.Collectors;
 
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,7 +24,7 @@ public class CustomJwtAuthenticationConverter
             new JwtGrantedAuthoritiesConverter();
 
     @Override
-    public AbstractAuthenticationToken convert(Jwt jwt) {
+    public AbstractAuthenticationToken convert(@NonNull Jwt jwt) {
         // Extract permissions from the permissions claim
         Collection<GrantedAuthority> authorities = extractPermissions(jwt);
 
@@ -46,8 +47,8 @@ public class CustomJwtAuthenticationConverter
         if (jwt.getClaims().containsKey("permissions")) {
             Object permissionObj = jwt.getClaim("permissions");
 
-            if (permissionObj instanceof String[]) {
-                authorities.addAll(Arrays.stream((String[]) permissionObj)
+            if (permissionObj instanceof String[] strings) {
+                authorities.addAll(Arrays.stream(strings)
                         .map(permission -> new SimpleGrantedAuthority("SCOPE_" + permission))
                         .collect(Collectors.toList()));
             } else if (permissionObj instanceof Collection) {
@@ -75,8 +76,8 @@ public class CustomJwtAuthenticationConverter
             if (jwt.getClaims().containsKey(roleClaim)) {
                 Object rolesObj = jwt.getClaim(roleClaim);
 
-                if (rolesObj instanceof String[]) {
-                    authorities.addAll(Arrays.stream((String[]) rolesObj)
+                if (rolesObj instanceof String[] strings) {
+                    authorities.addAll(Arrays.stream(strings)
                             .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
                             .collect(Collectors.toList()));
                 } else if (rolesObj instanceof Collection) {
