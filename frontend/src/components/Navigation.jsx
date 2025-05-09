@@ -2,9 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { PlusCircle, Shield, LogOut, Settings, User } from "lucide-react";
-import RequirePermission from "@/components/common/RequirePermission";
 
-const Navigation = ({ onAddNameClick }) => {
+const Navigation = () => {
   const { isAuthenticated, user, logout, userRoles, userPermissions, getHighestRole } = useAuth();
   const [showRoleInfo, setShowRoleInfo] = useState(false);
 
@@ -38,6 +37,10 @@ const Navigation = ({ onAddNameClick }) => {
     }
   };
 
+  const onLogoutClick = () => {
+    logout();
+  };
+
   return (
     <div className="navbar bg-base-100 shadow-lg mb-8">
       <div className="flex-1 ml-1">
@@ -62,15 +65,6 @@ const Navigation = ({ onAddNameClick }) => {
       {isAuthenticated && (
         <div className="flex-none">
           <ul className="menu menu-horizontal px-5 gap-5">
-            <RequirePermission permission="create:names">
-              <li>
-                <button onClick={onAddNameClick} className="btn hover:btn-primary">
-                  <PlusCircle className="h-5 w-5 mr-2" />
-                  <span className="hidden sm:inline">Add Name</span>
-                </button>
-              </li>
-            </RequirePermission>
-
             <li>
               <label className="swap swap-rotate">
                 <input
@@ -144,7 +138,7 @@ const Navigation = ({ onAddNameClick }) => {
                 )}
 
                 <li>
-                  <button onClick={() => logout()} className="flex items-center">
+                  <button onClick={onLogoutClick} className="flex items-center">
                     <LogOut className="h-4 w-4 mr-1" />
                     Logout
                   </button>
