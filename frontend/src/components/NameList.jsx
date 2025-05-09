@@ -250,13 +250,15 @@ const NamesList = () => {
         <h2 className="text-2xl font-bold">All Names</h2>
 
         <div className="flex items-center gap-2">
-          <button
-            className="btn btn-circle btn-sm btn-ghost tooltip tooltip-left"
-            data-tip="View your permissions"
-            onClick={() => setShowPermissionsInfo(!showPermissionsInfo)}
-          >
-            <Shield size={16} />
-          </button>
+          {import.meta.env.DEV || import.meta.env.MODE === "test" ? (
+            <button
+              className="btn btn-circle btn-sm btn-ghost tooltip tooltip-left"
+              data-tip="View your permissions"
+              onClick={() => setShowPermissionsInfo(!showPermissionsInfo)}
+            >
+              <Shield size={16} />
+            </button>
+          ) : null}
 
           <RequirePermission permission="create:names">
             <button
