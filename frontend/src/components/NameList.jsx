@@ -439,7 +439,9 @@ const NamesList = () => {
                       </button>
                     </div>
                   </th>
-                  <th className="w-20">Actions</th>
+                  {(hasPermission("update:names") || hasPermission("delete:names")) && (
+                    <th className="w-20">Actions</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -523,43 +525,45 @@ const NamesList = () => {
                       )}
                     </td>
                     <td className="px-4">{new Date(name.createdAt).toLocaleString()}</td>
-                    <td className="px-4">
-                      {editingId === name.uuid ? (
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleShowUpdateConfirmation(name.uuid)}
-                            className="btn btn-success btn-sm"
-                            disabled={
-                              editValidationErrors.firstName || editValidationErrors.lastName
-                            }
-                          >
-                            Save
-                          </button>
-                          <button onClick={handleCancelEdit} className="btn btn-ghost btn-sm">
-                            Cancel
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                          <RequirePermission permission="update:names">
+                    {(hasPermission("update:names") || hasPermission("delete:names")) && (
+                      <td className="px-4">
+                        {editingId === name.uuid ? (
+                          <div className="flex gap-2">
                             <button
-                              onClick={() => handleEdit(name)}
-                              className="btn btn-primary btn-sm"
+                              onClick={() => handleShowUpdateConfirmation(name.uuid)}
+                              className="btn btn-success btn-sm"
+                              disabled={
+                                editValidationErrors.firstName || editValidationErrors.lastName
+                              }
                             >
-                              Edit
+                              Save
                             </button>
-                          </RequirePermission>
-                          <RequirePermission permission="delete:names">
-                            <button
-                              onClick={() => handleShowDeleteConfirmation(name.uuid)}
-                              className="btn btn-error btn-sm"
-                            >
-                              Delete
+                            <button onClick={handleCancelEdit} className="btn btn-ghost btn-sm">
+                              Cancel
                             </button>
-                          </RequirePermission>
-                        </div>
-                      )}
-                    </td>
+                          </div>
+                        ) : (
+                          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            <RequirePermission permission="update:names">
+                              <button
+                                onClick={() => handleEdit(name)}
+                                className="btn btn-primary btn-sm"
+                              >
+                                Edit
+                              </button>
+                            </RequirePermission>
+                            <RequirePermission permission="delete:names">
+                              <button
+                                onClick={() => handleShowDeleteConfirmation(name.uuid)}
+                                className="btn btn-error btn-sm"
+                              >
+                                Delete
+                              </button>
+                            </RequirePermission>
+                          </div>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
